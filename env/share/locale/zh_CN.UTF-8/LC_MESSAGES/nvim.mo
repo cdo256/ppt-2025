@@ -1,0 +1,1 @@
+/nix/store/1xnhh71gp9fg1jggp49av18gf98kqvaq-neovim-unwrapped-0.10.4/share/locale/zh_CN.UTF-8/LC_MESSAGES/nvim.mo

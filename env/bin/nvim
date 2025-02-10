@@ -1,0 +1,274 @@
+#! /nix/store/4fvc5fm8bszmkydng1ivrvr5cbvr1g60-bash-5.2p37/bin/bash -e
+export NVIM_SYSTEM_RPLUGIN_MANIFEST='/nix/store/za2j31iy58ldzb9xrd1rx2rc4bm07bl6-neovim-0.10.4/rplugin.vim'
+export GEM_HOME='/nix/store/dq29x0b5xmnczh94c3py8v5mfml9qdj5-neovim-ruby-env/lib/ruby/gems/3.3.0'
+PATH=${PATH:+':'$PATH':'}
+if [[ $PATH != *':''/nix/store/dq29x0b5xmnczh94c3py8v5mfml9qdj5-neovim-ruby-env/bin'':'* ]]; then
+    PATH=$PATH'/nix/store/dq29x0b5xmnczh94c3py8v5mfml9qdj5-neovim-ruby-env/bin'
+fi
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+LUA_PATH=${LUA_PATH:+';'$LUA_PATH';'}
+LUA_PATH=${LUA_PATH/';''/nix/store/k0x0fmz8fxnnigkkjc3d3a8q1clr2bki-luajit-2.1.1713773202-env/share/lua/5.1/?/init.lua'';'/';'}
+LUA_PATH='/nix/store/k0x0fmz8fxnnigkkjc3d3a8q1clr2bki-luajit-2.1.1713773202-env/share/lua/5.1/?/init.lua'$LUA_PATH
+LUA_PATH=${LUA_PATH#';'}
+LUA_PATH=${LUA_PATH%';'}
+export LUA_PATH
+LUA_PATH=${LUA_PATH:+';'$LUA_PATH';'}
+LUA_PATH=${LUA_PATH/';''/nix/store/k0x0fmz8fxnnigkkjc3d3a8q1clr2bki-luajit-2.1.1713773202-env/share/lua/5.1/?.lua'';'/';'}
+LUA_PATH='/nix/store/k0x0fmz8fxnnigkkjc3d3a8q1clr2bki-luajit-2.1.1713773202-env/share/lua/5.1/?.lua'$LUA_PATH
+LUA_PATH=${LUA_PATH#';'}
+LUA_PATH=${LUA_PATH%';'}
+export LUA_PATH
+LUA_CPATH=${LUA_CPATH:+';'$LUA_CPATH';'}
+LUA_CPATH=${LUA_CPATH/';''/nix/store/k0x0fmz8fxnnigkkjc3d3a8q1clr2bki-luajit-2.1.1713773202-env/lib/lua/5.1/?.so'';'/';'}
+LUA_CPATH='/nix/store/k0x0fmz8fxnnigkkjc3d3a8q1clr2bki-luajit-2.1.1713773202-env/lib/lua/5.1/?.so'$LUA_CPATH
+LUA_CPATH=${LUA_CPATH#';'}
+LUA_CPATH=${LUA_CPATH%';'}
+export LUA_CPATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/d7i7ccjxmlzh73l2s458s3c9kwdj2s3b-ripgrep-14.1.1/bin'':'/':'}
+PATH='/nix/store/d7i7ccjxmlzh73l2s458s3c9kwdj2s3b-ripgrep-14.1.1/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/w4fdqhg0cdljkxwm4mqpqbaslrh1gray-lazygit-0.45.2/bin'':'/':'}
+PATH='/nix/store/w4fdqhg0cdljkxwm4mqpqbaslrh1gray-lazygit-0.45.2/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/41mknndzwvn4w0pkf6yq26n5pnpbnq2y-wl-clipboard-2.2.1/bin'':'/':'}
+PATH='/nix/store/41mknndzwvn4w0pkf6yq26n5pnpbnq2y-wl-clipboard-2.2.1/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/rsi4rdsva6wxlfyqr10axg41kwyiqva1-cornelis-0.2.0.1/bin'':'/':'}
+PATH='/nix/store/rsi4rdsva6wxlfyqr10axg41kwyiqva1-cornelis-0.2.0.1/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/1mgrisy0nmgsab07djyvdbw0dp6bkk9z-fzf-0.59.0/bin'':'/':'}
+PATH='/nix/store/1mgrisy0nmgsab07djyvdbw0dp6bkk9z-fzf-0.59.0/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/7mln3k7mmvsnpgp47zr63w9d60pqba9n-git-2.47.1/bin'':'/':'}
+PATH='/nix/store/7mln3k7mmvsnpgp47zr63w9d60pqba9n-git-2.47.1/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/7mln3k7mmvsnpgp47zr63w9d60pqba9n-git-2.47.1/bin'':'/':'}
+PATH='/nix/store/7mln3k7mmvsnpgp47zr63w9d60pqba9n-git-2.47.1/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/gripb51fm48l44qwhm0bk0ji3b55ki03-bat-0.25.0/bin'':'/':'}
+PATH='/nix/store/gripb51fm48l44qwhm0bk0ji3b55ki03-bat-0.25.0/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/bkr6fz7zhfqrgj6fq8f3w7sa2lcb5x1f-tree-sitter-0.24.6/bin'':'/':'}
+PATH='/nix/store/bkr6fz7zhfqrgj6fq8f3w7sa2lcb5x1f-tree-sitter-0.24.6/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/k1r91cjalyc2mzzllpv5hklhqn8wvgjr-nodejs-22.12.0/bin'':'/':'}
+PATH='/nix/store/k1r91cjalyc2mzzllpv5hklhqn8wvgjr-nodejs-22.12.0/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/591apldfgm1gr238rbfc8ib0y1z8ng2y-gcc-wrapper-14-20241116/bin'':'/':'}
+PATH='/nix/store/591apldfgm1gr238rbfc8ib0y1z8ng2y-gcc-wrapper-14-20241116/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/vydc7hvwi8s09wrjqvl2mnxwa3fs4qpl-statix-0.5.8/bin'':'/':'}
+PATH='/nix/store/vydc7hvwi8s09wrjqvl2mnxwa3fs4qpl-statix-0.5.8/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/vydc7hvwi8s09wrjqvl2mnxwa3fs4qpl-statix-0.5.8/bin'':'/':'}
+PATH='/nix/store/vydc7hvwi8s09wrjqvl2mnxwa3fs4qpl-statix-0.5.8/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/cz1y92gzhb2ldxz8jhfmfg84r99v15z1-python3.12-yamllint-1.35.1/bin'':'/':'}
+PATH='/nix/store/cz1y92gzhb2ldxz8jhfmfg84r99v15z1-python3.12-yamllint-1.35.1/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/z11xydlv01159zbkkpkf01a7g81r7007-python3.12-black-24.8.0/bin'':'/':'}
+PATH='/nix/store/z11xydlv01159zbkkpkf01a7g81r7007-python3.12-black-24.8.0/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/qafpajb0vqdnndfkjqw4dgd8jg1zc8cx-hclfmt-2.23.0/bin'':'/':'}
+PATH='/nix/store/qafpajb0vqdnndfkjqw4dgd8jg1zc8cx-hclfmt-2.23.0/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/5437izm22g3084vsh0jmqmazgrdgib5n-nixfmt-unstable-2024-12-04/bin'':'/':'}
+PATH='/nix/store/5437izm22g3084vsh0jmqmazgrdgib5n-nixfmt-unstable-2024-12-04/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/rrmdwy79qyc61lxmrggvrpmdmrq3zym7-prettier-3.3.3/bin'':'/':'}
+PATH='/nix/store/rrmdwy79qyc61lxmrggvrpmdmrq3zym7-prettier-3.3.3/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/d2kll4ywb917dgljvv7dj2zmbh6g2459-stylua-2.0.2/bin'':'/':'}
+PATH='/nix/store/d2kll4ywb917dgljvv7dj2zmbh6g2459-stylua-2.0.2/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/6jsn1y2bspnka17rqqyh63aw89n0js91-yamlfmt-0.15.0/bin'':'/':'}
+PATH='/nix/store/6jsn1y2bspnka17rqqyh63aw89n0js91-yamlfmt-0.15.0/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/ramlxiidsvf0hh3jrfxyvqxnlm2q6gw4-gopls-0.17.1/bin'':'/':'}
+PATH='/nix/store/ramlxiidsvf0hh3jrfxyvqxnlm2q6gw4-gopls-0.17.1/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/7288p553inx5bql79bfifa3m344r81vx-vscode-langservers-extracted-4.10.0/bin'':'/':'}
+PATH='/nix/store/7288p553inx5bql79bfifa3m344r81vx-vscode-langservers-extracted-4.10.0/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/5l4zsgcx79nn44nqj9y8g2r8fdzk0l6j-lua-language-server-3.13.5/bin'':'/':'}
+PATH='/nix/store/5l4zsgcx79nn44nqj9y8g2r8fdzk0l6j-lua-language-server-3.13.5/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/nvn95qw9z2rp2bszh3krfhlfgx3syrkg-markdown-oxide-0.25.0/bin'':'/':'}
+PATH='/nix/store/nvn95qw9z2rp2bszh3krfhlfgx3syrkg-markdown-oxide-0.25.0/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/a9dj3yk1kmas8l8ywvp746l50d329zka-nixd-2.6.0/bin'':'/':'}
+PATH='/nix/store/a9dj3yk1kmas8l8ywvp746l50d329zka-nixd-2.6.0/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/cx2ansxz0vvm9780ghqqrwr5fjh8sgi2-pyright-1.1.391/bin'':'/':'}
+PATH='/nix/store/cx2ansxz0vvm9780ghqqrwr5fjh8sgi2-pyright-1.1.391/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/l716f0273p1495l52952gdp64m7vsjc7-terraform-ls-0.36.4/bin'':'/':'}
+PATH='/nix/store/l716f0273p1495l52952gdp64m7vsjc7-terraform-ls-0.36.4/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/xbiy7nalxypgjdi2c29bckxmp3dm7hb0-yaml-language-server-1.15.0/bin'':'/':'}
+PATH='/nix/store/xbiy7nalxypgjdi2c29bckxmp3dm7hb0-yaml-language-server-1.15.0/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+PATH=${PATH:+':'$PATH':'}
+PATH=${PATH/':''/nix/store/0b6vsy4fa4i4qpk1011hi6251nwdg5y8-go-1.23.4/bin'':'/':'}
+PATH='/nix/store/0b6vsy4fa4i4qpk1011hi6251nwdg5y8-go-1.23.4/bin'$PATH
+PATH=${PATH#':'}
+PATH=${PATH%':'}
+export PATH
+LUA_PATH=${LUA_PATH:+';'$LUA_PATH';'}
+LUA_PATH=${LUA_PATH/';''/nix/store/px57hpxqb37yq7jg83lf4b9j3q6mbsc6-luajit-2.1.1713773202/share/lua/5.1/?.lua'';'/';'}
+LUA_PATH='/nix/store/px57hpxqb37yq7jg83lf4b9j3q6mbsc6-luajit-2.1.1713773202/share/lua/5.1/?.lua'$LUA_PATH
+LUA_PATH=${LUA_PATH#';'}
+LUA_PATH=${LUA_PATH%';'}
+export LUA_PATH
+LUA_PATH=${LUA_PATH:+';'$LUA_PATH';'}
+LUA_PATH=${LUA_PATH/';''/nix/store/in0ydcq8hkryz7dcgkw65qj7kwhd1y23-lua5.1-jsregexp-0.0.7-1/share/lua/5.1/?.lua'';'/';'}
+LUA_PATH='/nix/store/in0ydcq8hkryz7dcgkw65qj7kwhd1y23-lua5.1-jsregexp-0.0.7-1/share/lua/5.1/?.lua'$LUA_PATH
+LUA_PATH=${LUA_PATH#';'}
+LUA_PATH=${LUA_PATH%';'}
+export LUA_PATH
+LUA_PATH=${LUA_PATH:+';'$LUA_PATH';'}
+LUA_PATH=${LUA_PATH/';''/nix/store/pb1paj90fxqn5jn1m0mn5awq60awm131-lua5.1-say-1.4.1-3/share/lua/5.1/?/init.lua'';'/';'}
+LUA_PATH='/nix/store/pb1paj90fxqn5jn1m0mn5awq60awm131-lua5.1-say-1.4.1-3/share/lua/5.1/?/init.lua'$LUA_PATH
+LUA_PATH=${LUA_PATH#';'}
+LUA_PATH=${LUA_PATH%';'}
+export LUA_PATH
+LUA_PATH=${LUA_PATH:+';'$LUA_PATH';'}
+LUA_PATH=${LUA_PATH/';''/nix/store/pb1paj90fxqn5jn1m0mn5awq60awm131-lua5.1-say-1.4.1-3/share/lua/5.1/?.lua'';'/';'}
+LUA_PATH='/nix/store/pb1paj90fxqn5jn1m0mn5awq60awm131-lua5.1-say-1.4.1-3/share/lua/5.1/?.lua'$LUA_PATH
+LUA_PATH=${LUA_PATH#';'}
+LUA_PATH=${LUA_PATH%';'}
+export LUA_PATH
+LUA_PATH=${LUA_PATH:+';'$LUA_PATH';'}
+LUA_PATH=${LUA_PATH/';''/nix/store/whb3m5pxng00cd7dhywx6hfm27nk81la-lua5.1-luassert-1.9.0-1/share/lua/5.1/?/init.lua'';'/';'}
+LUA_PATH='/nix/store/whb3m5pxng00cd7dhywx6hfm27nk81la-lua5.1-luassert-1.9.0-1/share/lua/5.1/?/init.lua'$LUA_PATH
+LUA_PATH=${LUA_PATH#';'}
+LUA_PATH=${LUA_PATH%';'}
+export LUA_PATH
+LUA_PATH=${LUA_PATH:+';'$LUA_PATH';'}
+LUA_PATH=${LUA_PATH/';''/nix/store/whb3m5pxng00cd7dhywx6hfm27nk81la-lua5.1-luassert-1.9.0-1/share/lua/5.1/?.lua'';'/';'}
+LUA_PATH='/nix/store/whb3m5pxng00cd7dhywx6hfm27nk81la-lua5.1-luassert-1.9.0-1/share/lua/5.1/?.lua'$LUA_PATH
+LUA_PATH=${LUA_PATH#';'}
+LUA_PATH=${LUA_PATH%';'}
+export LUA_PATH
+LUA_PATH=${LUA_PATH:+';'$LUA_PATH';'}
+LUA_PATH=${LUA_PATH/';''/nix/store/dxcv920yvwlawhxq9f58ykalc45x42ws-lua5.1-plenary.nvim-scm-1/share/lua/5.1/?/init.lua'';'/';'}
+LUA_PATH='/nix/store/dxcv920yvwlawhxq9f58ykalc45x42ws-lua5.1-plenary.nvim-scm-1/share/lua/5.1/?/init.lua'$LUA_PATH
+LUA_PATH=${LUA_PATH#';'}
+LUA_PATH=${LUA_PATH%';'}
+export LUA_PATH
+LUA_PATH=${LUA_PATH:+';'$LUA_PATH';'}
+LUA_PATH=${LUA_PATH/';''/nix/store/dxcv920yvwlawhxq9f58ykalc45x42ws-lua5.1-plenary.nvim-scm-1/share/lua/5.1/?.lua'';'/';'}
+LUA_PATH='/nix/store/dxcv920yvwlawhxq9f58ykalc45x42ws-lua5.1-plenary.nvim-scm-1/share/lua/5.1/?.lua'$LUA_PATH
+LUA_PATH=${LUA_PATH#';'}
+LUA_PATH=${LUA_PATH%';'}
+export LUA_PATH
+LUA_CPATH=${LUA_CPATH:+';'$LUA_CPATH';'}
+LUA_CPATH=${LUA_CPATH/';''/nix/store/in0ydcq8hkryz7dcgkw65qj7kwhd1y23-lua5.1-jsregexp-0.0.7-1/lib/lua/5.1/?.so'';'/';'}
+LUA_CPATH='/nix/store/in0ydcq8hkryz7dcgkw65qj7kwhd1y23-lua5.1-jsregexp-0.0.7-1/lib/lua/5.1/?.so'$LUA_CPATH
+LUA_CPATH=${LUA_CPATH#';'}
+LUA_CPATH=${LUA_CPATH%';'}
+export LUA_CPATH
+env
+#exec "/nix/store/zv728i6r27mbzig3frsdjzjx3mf6rr4g-neovim-byte-compiled-0.10.4/bin/nvim"  --cmd "lua vim.g.loaded_node_provider=0;vim.g.loaded_perl_provider=0;vim.g.loaded_python_provider=0;vim.g.python3_host_prog='/nix/store/za2j31iy58ldzb9xrd1rx2rc4bm07bl6-neovim-0.10.4/bin/nvim-python3';vim.g.ruby_host_prog='/nix/store/za2j31iy58ldzb9xrd1rx2rc4bm07bl6-neovim-0.10.4/bin/nvim-ruby'" --cmd "set packpath^=/nix/store/63nrzhvnslsr3s7jf00c9r16kz9k27dw-vim-pack-dir" --cmd "set rtp^=/nix/store/63nrzhvnslsr3s7jf00c9r16kz9k27dw-vim-pack-dir" -u /nix/store/2qqms5i91khhyhazhxrrhrrkbjiqbd0s-init.lua "$@" 
+
+
+
+#exec
+"/nix/store/zv728i6r27mbzig3frsdjzjx3mf6rr4g-neovim-byte-compiled-0.10.4/bin/nvim"  
+--cmd "lua
+  vim.g.loaded_node_provider=0;
+  vim.g.loaded_perl_provider=0;
+  vim.g.loaded_python_provider=0;
+  vim.g.python3_host_prog='/nix/store/za2j31iy58ldzb9xrd1rx2rc4bm07bl6-neovim-0.10.4/bin/nvim-python3';
+  vim.g.ruby_host_prog='/nix/store/za2j31iy58ldzb9xrd1rx2rc4bm07bl6-neovim-0.10.4/bin/nvim-ruby'" 
+--cmd "set packpath^=/nix/store/63nrzhvnslsr3s7jf00c9r16kz9k27dw-vim-pack-dir"
+--cmd "set rtp^=/nix/store/63nrzhvnslsr3s7jf00c9r16kz9k27dw-vim-pack-dir" 
+-u /nix/store/2qqms5i91khhyhazhxrrhrrkbjiqbd0s-init.lua "$@" 
+
+
