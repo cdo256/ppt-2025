@@ -4,10 +4,6 @@ Library for COMP4074.PPT
 upto lecture 05
 -}
 
-module lib05 where
-
-open import lib02
-
 {- products and sums -}
 
 record _×_ (A B : Set) : Set where
@@ -40,6 +36,8 @@ uncase f = (λ a → f (inj₁ a)) , λ b → f (inj₂ b)
 case' : (A → C) × (B → C) → (A ⊎ B → C)
 case' = uncurry case
 
+-- propositional logic
+
 record ⊤ : Set where
   constructor tt
 
@@ -48,3 +46,31 @@ data ⊥ : Set where
 case⊥ : ⊥ → A
 case⊥ ()
 
+Prop = Set
+
+infix 3 _∧_
+_∧_ : Prop → Prop → Prop
+P ∧ Q = P × Q
+
+infix 2 _∨_
+_∨_ : Prop → Prop → Prop
+P ∨ Q = P ⊎ Q
+
+infix 1 _⇒_
+_⇒_ : Prop → Prop → Prop
+P ⇒ Q = P → Q
+
+infix 0 _⇔_
+_⇔_ : Prop → Prop → Prop
+P ⇔ Q = (P ⇒ Q) ∧ (Q ⇒ P)
+
+True : Prop
+True = ⊤
+
+False : Prop
+False = ⊥
+
+¬_ : Prop → Prop
+¬ P = P ⇒ False
+
+variable P Q R : Prop

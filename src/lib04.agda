@@ -1,6 +1,6 @@
 {- Lecture 04 COMP4074 -}
 
-module lib03 where
+module lib04 where
 
 open import lib02
 
