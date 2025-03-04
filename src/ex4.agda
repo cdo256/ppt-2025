@@ -186,20 +186,15 @@ pred∞ (m *∞3 n) with (pred∞ m , pred∞ n)
 ... | just m' , nothing = nothing
 ... | just m' , just n' = just ((n' +∞ m') +∞ (m' *∞3 n'))
 
-ℕ⊎∞ = Maybe ℕ
-
-data ℕ≤ (n : ℕ∞) : Set  where
-  coinductive
-  constructor suc_
-  field
-    limit : ℕ≤ → ℕ∞
-
-ℕ∞≤ : (n : ℕ⊎∞) → (ℕ∞ × )
-
-_*∞4_ :  ℕ∞ → ℕ∞ → ℕ∞
-pred∞ (m *∞4 n) with pred∞ m
-... |  nothing = nothing
-... |  just m' = just (pred∞ (m' *∞4 n))
+-- ℕ⊎∞ = Maybe ℕ
+-- 
+-- data ℕ≤ (n : ℕ∞) : Set  where
+--   coinductive
+--   -- constructor suc_
+--   field
+--     limit : ℕ≤ → ℕ∞
+-- 
+-- ℕ∞≤ : (n : ℕ⊎∞) → (ℕ∞ × )
 
 
 _*∞_ : ℕ∞ → ℕ∞ → ℕ∞
