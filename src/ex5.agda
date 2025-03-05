@@ -233,31 +233,6 @@ plus-eq : (Fin m ⊎ Fin n) ≅ Fin (m + n)
 
    Hint: plus-eq may come in handy. -}
 
-{- Idea:
-Suppose x : Fin (Σℕ (suc n) f)
-Let += : (Fin (f 0) ⊎ Fin n) ≅ Fin (f 0 + n)
-Let f' = λ x → f (suc x)
-Let n = Σℕ n f'
-Then (ψ plus-eq x) : Fin (f 0) ⊎ Fin n
-Cases: k = inj₁ (ϕ plus-eq x) -> 0 , Fin (f 0)
-Cases: k = inj₂ (ϕ plus-eq x) -> let (i , α) = ϕ (Σiso n f') k
-
-Then
-  ϕ (Σ (suc n) f) x
--}
-
-
-{-
-Σiso : (n : ℕ)(f : Fin n → ℕ) →
-  Fin (Σℕ n f) ≅ Σ (Fin n) (λ x → Fin (f x))
-φ (Σiso zero f) ()
-φ (Σiso (suc n) f) x with (ψ (plus-eq {f zero} { Σℕ n (λ x → f (suc x))}) x)
-... | inj₁ z = zero , z
-... | inj₂ z with ((φ (Σiso n (λ x → f (suc x)))) z)
-...        | i , m = (suc i) , {!f ?!}
-ψ (Σiso n f) y = {!!}
--}
-
 {-
   Fin (Σℕ (suc n) f)
 = (definition of Σℕ)
@@ -266,18 +241,10 @@ Then
   Fin (f 0) ⊎ Fin (Σℕ n (λ x → f (suc x)))
 ≅ (recurse Σiso)
   Fin (f 0) ⊎ Σ (Fin n) (λ x → Fin (f (suc x)) x)
-≅ (construction)
-  Σ (Fin (suc n)) (λ {
-         0 → (Fin (f 0)) ;
-         suc x → Fin (f (suc x)) })
-= (simplification)
+≅ (cases)
   Σ (Fin (suc n)) (λ x → Fin (f x))
 -}
 
--- ≅ Σ (Fin n) (λ x → Fin (f x))
--- iso
--- SplitΣ : {A B C D : Set} → {F : A → C} → {G : B → D} → Σ (A ⊎ B) (λ x → F A)
--- 
 left-lift-≅ : {A B C : Set} → A ≅ B → (C ⊎ A) ≅ (C ⊎ B)
 φ (left-lift-≅ a≅b) (inj₁ c) = inj₁ c
 φ (left-lift-≅ a≅b) (inj₂ a) = inj₂ (φ a≅b a)
@@ -300,9 +267,6 @@ left-lift-≅ : {A B C : Set} → A ≅ B → (C ⊎ A) ≅ (C ⊎ B)
     ψ cases (zero , z) = inj₁ z
     ψ cases (suc i , z) = inj₂ (i , z)
 
--- with ((φ (Σiso n (λ x → f (suc x)))) z)
--- ...        | i , m = (suc i) , {!f ?!}
-
 
 {- some test cases -}
 
@@ -321,18 +285,3 @@ tiso2 = ψ (Σiso 5 fin→ℕ) (φ (Σiso 5 fin→ℕ) (suc (suc zero)))
 {- If you still don't feel challenged, do Π as well. -}
 -- -}
 
-Σiso : (n : ℕ)(f : Fin n → ℕ) →
-  Fin (Σℕ n f) ≅ Σ (Fin n) (λ x → Fin (f x))
-φ (Σiso zero f) ()
-ψ (Σiso zero f) ()
-Σiso (suc n) f = trans (trans (sym plus-eq) (left-lift-≅ recurse)) cases
-  where
-    recurse : Fin (Σℕ n (λ x → f (suc x))) ≅
-           Σ (Fin n) (λ x → Fin (f (suc x)))
-    recurse = Σiso n (λ x → f (suc x))
-    cases : (Fin (f zero) ⊎ Σ (Fin n) (λ x → Fin (f (suc x)))) ≅
-           Σ (Fin (suc n)) (λ x → Fin (f x))
-    φ cases (inj₁ z) = (zero , z)
-    φ cases (inj₂ (i , z)) = (suc i , z)
-    ψ cases (zero , z) = inj₁ z
-    ψ cases (suc i , z) = inj₂ (i , z)
