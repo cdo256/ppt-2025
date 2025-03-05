@@ -50,19 +50,23 @@ inv3 = (0 ∷ 0 ∷ 1 ∷ [])
 
 m3 : Matrix 3 3
 m3 = (1 ∷ 2 ∷ 3 ∷ []) 
-    ∷ (4 ∷ 5 ∷ 6 ∷ []) 
-    ∷ (7 ∷ 8 ∷ 9 ∷ []) 
-    ∷ []
+   ∷ (4 ∷ 5 ∷ 6 ∷ []) 
+   ∷ (7 ∷ 8 ∷ 9 ∷ []) 
+   ∷ []
 
 m4 : Matrix 3 2
 m4 = (1 ∷ 2 ∷ []) 
-    ∷ (4 ∷ 5 ∷ []) 
-    ∷ (7 ∷ 8 ∷ []) 
-    ∷ []
+   ∷ (4 ∷ 5 ∷ []) 
+   ∷ (7 ∷ 8 ∷ []) 
+   ∷ []
 
 {- multiplication of a scalar (a number) with a vector -}
+map-v : {A B : Set} → {n : ℕ} → (A → B) → (Vec A n → Vec B n)
+map-v f [] = []
+map-v f (x ∷ xs) = f x ∷ (map-v f xs)
+
 _*v_ : {n : ℕ} → ℕ → Vector n → Vector n
-_*v_ = {!!}
+_*v_ x = map-v (λ y → y * x)
 
 test1 : Vector 3
 test1 = 2 *v v1
@@ -70,7 +74,8 @@ test1 = 2 *v v1
 
 {- addition of vectors -}
 _+v_ : {n : ℕ} → Vector n → Vector n → Vector n
-_+v_ = {!!}
+_+v_ [] [] = []
+_+v_ (x ∷ xs) (y ∷ ys) = (x + y) ∷ (xs +v ys)
 
 test2 : Vector 3
 test2 = v1 +v v2
@@ -84,8 +89,14 @@ zeros {suc n} = zero ∷ zeros {n}
 
 This is usually done the other way around, but in our representation this one is easier. 
 -}
+
+_·_ : {n : ℕ} → Vector n → Vector n → ℕ
+[] · [] = 0
+(x ∷ xs) · (y ∷ ys) = (x * y) + (xs · ys)
+
 _*vm_ : {m n : ℕ} → Vector m → Matrix m n → Vector n
-_*vm_ = {!!}
+_*vm_ {zero} {n} [] [] =  zeros
+_*vm_ {suc m} {n} (x ∷ xs) (ys ∷ yss) = (x *v ys) +v (xs *vm yss)
 
 test3 : Vector 2
 test3 = v1 *vm m4
@@ -97,7 +108,8 @@ test4 = v1 *vm m3
 
 {- matrix multiplication -}
 _*mm_ : {l m n : ℕ} → Matrix l m → Matrix m n → Matrix l n
-_*mm_ = {!!}
+[] *mm _ = []
+(xs ∷ xss) *mm yss = (xs *vm yss) ∷ (xss *mm yss)
 
 test5 : Matrix 3 3
 test5 = inv3 *mm m3
@@ -124,10 +136,24 @@ test7 = m3 *mm m3
 ∷ []
 -}
 
-{- Part 2 : The transposition of a matrix, here we swap columns and rows.-}
+-- {- Part 2 : The transposition of a matrix, here we swap columns and rows.-}
+
+repeat-v : {A : Set} → {n : ℕ} → A → Vec A n
+repeat-v {A} {zero} x = []
+repeat-v {A} {suc n} x = x ∷ (repeat-v {A} {n} x)
+
+-- append-v : {A : Set} → {n : ℕ} → A → Vec A n → Vec A (suc n)
+-- append-v x [] = x ∷ []
+-- append-v x (y ∷ ys) = y ∷ append-v x ys
+
+append-mv : {m n : ℕ} → Matrix m n → Vector m → Matrix m (suc n)
+append-mv [] [] = []
+append-mv (xs ∷ xss) (y ∷ ys) =
+  (y ∷ xs) ∷ append-mv xss ys
 
 transpose : {m n : ℕ} → Matrix m n → Matrix n m
-transpose = {!!}
+transpose [] = repeat-v []
+transpose (xs ∷ xss) = append-mv (transpose xss) xs
 
 test8 : Matrix 2 3
 test8 = transpose m4
@@ -156,6 +182,19 @@ record _≅_ (A B : Set) : Set where
     --eq₂ : φ ∘ ψ ≡ id
 
 open _≅_ public
+
+-- Just some practice :)
+id' : {A : Set} → A ≅ A
+id' .φ = λ x → x
+id' .ψ = λ x → x
+
+sym : {A B : Set} → A ≅ B → B ≅ A
+sym ab .φ = ψ ab
+sym ab .ψ = φ ab
+
+trans : {A B C : Set} → A ≅ B → B ≅ C → A ≅ C
+trans ab bc .φ = λ a → (φ bc (φ ab a))
+trans ab bc .ψ = λ c → (ψ ab (ψ bc c))
 
 variable m n : ℕ
 
@@ -188,12 +227,101 @@ plus-eq : (Fin m ⊎ Fin n) ≅ Fin (m + n)
 Σℕ zero f = 0
 Σℕ (suc n) f = f zero + Σℕ n (λ x → f (suc x))
 
+-- Σℕ n f = f 0 + f 1 + ... + f n
+-- {-
 {- Derive the isomorphism for Σ
 
    Hint: plus-eq may come in handy. -}
 
-Σiso : (n : ℕ)(f : Fin n → ℕ) → Fin (Σℕ n f) ≅ Σ (Fin n) λ x → Fin (f x)
-Σiso = {!!}
+{- Idea:
+Suppose x : Fin (Σℕ (suc n) f)
+Let += : (Fin (f 0) ⊎ Fin n) ≅ Fin (f 0 + n)
+Let f' = λ x → f (suc x)
+Let n = Σℕ n f'
+Then (ψ plus-eq x) : Fin (f 0) ⊎ Fin n
+Cases: k = inj₁ (ϕ plus-eq x) -> 0 , Fin (f 0)
+Cases: k = inj₂ (ϕ plus-eq x) -> let (i , α) = ϕ (Σiso n f') k
+
+Then
+  ϕ (Σ (suc n) f) x
+-}
+
+
+{-
+Σiso : (n : ℕ)(f : Fin n → ℕ) →
+  Fin (Σℕ n f) ≅ Σ (Fin n) (λ x → Fin (f x))
+φ (Σiso zero f) ()
+φ (Σiso (suc n) f) x with (ψ (plus-eq {f zero} { Σℕ n (λ x → f (suc x))}) x)
+... | inj₁ z = zero , z
+... | inj₂ z with ((φ (Σiso n (λ x → f (suc x)))) z)
+...        | i , m = (suc i) , {!f ?!}
+ψ (Σiso n f) y = {!!}
+-}
+
+{-
+  Fin (Σℕ (suc n) f)
+= (definition of Σℕ)
+  Fin (f 0 + (Σℕ n (λ x → f (suc x))))
+≅ (plus-eq)
+  Fin (f 0) ⊎ Fin (Σℕ n (λ x → f (suc x)))
+≅ (recurse Σiso)
+  Fin (f 0) ⊎ Σ (Fin n) (λ x → Fin (f (suc x)) x)
+≅ (construction)
+  Σ (Fin (suc n)) (λ {
+         0 → (Fin (f 0)) ;
+         suc x → Fin (f (suc x)) })
+= (simplification)
+  Σ (Fin (suc n)) (λ x → Fin (f x))
+-}
+
+-- ≅ Σ (Fin n) (λ x → Fin (f x))
+
+_∘_ : {A B C : Set} → (B → C) → (A → B) → A → C
+g ∘ f = λ x → g (f x)
+
+Σiso : (n : ℕ)(f : Fin n → ℕ) →
+  Fin (Σℕ n f) ≅ Σ (Fin n) (λ x → Fin (f x))
+φ (Σiso zero f) ()
+φ (Σiso (suc n) f) x = cases (split-first x)
+  where
+    split-first : Fin (Σℕ (suc n) f) →
+           Fin (f zero) ⊎ Fin (Σℕ n (λ x → f (suc x)))
+    split-first = ψ plus-eq
+    recurse : Fin (Σℕ n (λ x → f (suc x))) →
+           Σ (Fin n) (λ x → Fin (f (suc x)))
+    recurse = φ (Σiso n (λ x → f (suc x)))
+    inc : Σ (Fin n) (λ x → Fin (f (suc x))) →
+           Σ (Fin (suc n)) (λ x → Fin (f x))
+    inc (i , z) = (suc i , z)
+    base : Fin (f zero) → Σ (Fin (suc n)) (λ x → Fin (f x))
+    base z = zero , z
+    cases : Fin (f zero) ⊎ Fin (Σℕ n (λ x → f (suc x))) →
+           Σ (Fin (suc n)) (λ x → Fin (f x))
+    cases = case base λ y → inc (recurse y)
+    
+--    Fin (f 0) ⊎ Fin (Σℕ n (λ x → f (suc x)))
+-- ≅ (recurse Σiso)
+--   Fin (f 0) ⊎ Σ (Fin n) (λ x → Fin (f (suc x)) x)
+-- ≅ (construction)
+--   Σ (Fin (suc n)) (λ {
+--          0 → (Fin (f 0)) ;
+--          suc x → Fin (f (suc x)) })
+-- = (simplification)
+--   Σ (Fin (suc n)) (λ x → Fin (f x))
+
+    f' : Fin n → ℕ
+    f' i = f (suc i)
+    α : Σ[ i ∈ Fin n ] (Fin (f' i))
+    α = {! Σiso n f'!}
+    -- α : Fin (f i)
+    -- (i , α) : Π[ i ∈ Fin n ] (Fin f i)
+    -- (i , α) = {! ϕ (Σiso n f') ?!}
+    -- (i , α) = ?
+ψ (Σiso n f) = {!!}
+
+-- with ((φ (Σiso n (λ x → f (suc x)))) z)
+-- ...        | i , m = (suc i) , {!f ?!}
+
 
 {- some test cases -}
 
@@ -210,3 +338,4 @@ tiso2 = ψ (Σiso 5 fin→ℕ) (φ (Σiso 5 fin→ℕ) (suc (suc zero)))
 -- suc (suc zero)
 
 {- If you still don't feel challenged, do Π as well. -}
+-- -}
