@@ -275,49 +275,30 @@ Then
 -}
 
 -- ≅ Σ (Fin n) (λ x → Fin (f x))
-
-_∘_ : {A B C : Set} → (B → C) → (A → B) → A → C
-g ∘ f = λ x → g (f x)
+-- iso
+-- SplitΣ : {A B C D : Set} → {F : A → C} → {G : B → D} → Σ (A ⊎ B) (λ x → F A)
+-- 
+left-lift-≅ : {A B C : Set} → A ≅ B → (C ⊎ A) ≅ (C ⊎ B)
+φ (left-lift-≅ a≅b) (inj₁ c) = inj₁ c
+φ (left-lift-≅ a≅b) (inj₂ a) = inj₂ (φ a≅b a)
+ψ (left-lift-≅ a≅b) (inj₁ c) = inj₁ c
+ψ (left-lift-≅ a≅b) (inj₂ b) = inj₂ (ψ a≅b b)
 
 Σiso : (n : ℕ)(f : Fin n → ℕ) →
   Fin (Σℕ n f) ≅ Σ (Fin n) (λ x → Fin (f x))
 φ (Σiso zero f) ()
-φ (Σiso (suc n) f) x = cases (split-first x)
+ψ (Σiso zero f) ()
+Σiso (suc n) f = trans (trans (sym plus-eq) (left-lift-≅ recurse)) cases
   where
-    split-first : Fin (Σℕ (suc n) f) →
-           Fin (f zero) ⊎ Fin (Σℕ n (λ x → f (suc x)))
-    split-first = ψ plus-eq
-    recurse : Fin (Σℕ n (λ x → f (suc x))) →
+    recurse : Fin (Σℕ n (λ x → f (suc x))) ≅
            Σ (Fin n) (λ x → Fin (f (suc x)))
-    recurse = φ (Σiso n (λ x → f (suc x)))
-    inc : Σ (Fin n) (λ x → Fin (f (suc x))) →
+    recurse = Σiso n (λ x → f (suc x))
+    cases : (Fin (f zero) ⊎ Σ (Fin n) (λ x → Fin (f (suc x)))) ≅
            Σ (Fin (suc n)) (λ x → Fin (f x))
-    inc (i , z) = (suc i , z)
-    base : Fin (f zero) → Σ (Fin (suc n)) (λ x → Fin (f x))
-    base z = zero , z
-    cases : Fin (f zero) ⊎ Fin (Σℕ n (λ x → f (suc x))) →
-           Σ (Fin (suc n)) (λ x → Fin (f x))
-    cases = case base λ y → inc (recurse y)
-    
---    Fin (f 0) ⊎ Fin (Σℕ n (λ x → f (suc x)))
--- ≅ (recurse Σiso)
---   Fin (f 0) ⊎ Σ (Fin n) (λ x → Fin (f (suc x)) x)
--- ≅ (construction)
---   Σ (Fin (suc n)) (λ {
---          0 → (Fin (f 0)) ;
---          suc x → Fin (f (suc x)) })
--- = (simplification)
---   Σ (Fin (suc n)) (λ x → Fin (f x))
-
-    f' : Fin n → ℕ
-    f' i = f (suc i)
-    α : Σ[ i ∈ Fin n ] (Fin (f' i))
-    α = {! Σiso n f'!}
-    -- α : Fin (f i)
-    -- (i , α) : Π[ i ∈ Fin n ] (Fin f i)
-    -- (i , α) = {! ϕ (Σiso n f') ?!}
-    -- (i , α) = ?
-ψ (Σiso n f) = {!!}
+    φ cases (inj₁ z) = (zero , z)
+    φ cases (inj₂ (i , z)) = (suc i , z)
+    ψ cases (zero , z) = inj₁ z
+    ψ cases (suc i , z) = inj₂ (i , z)
 
 -- with ((φ (Σiso n (λ x → f (suc x)))) z)
 -- ...        | i , m = (suc i) , {!f ?!}
@@ -339,3 +320,19 @@ tiso2 = ψ (Σiso 5 fin→ℕ) (φ (Σiso 5 fin→ℕ) (suc (suc zero)))
 
 {- If you still don't feel challenged, do Π as well. -}
 -- -}
+
+Σiso : (n : ℕ)(f : Fin n → ℕ) →
+  Fin (Σℕ n f) ≅ Σ (Fin n) (λ x → Fin (f x))
+φ (Σiso zero f) ()
+ψ (Σiso zero f) ()
+Σiso (suc n) f = trans (trans (sym plus-eq) (left-lift-≅ recurse)) cases
+  where
+    recurse : Fin (Σℕ n (λ x → f (suc x))) ≅
+           Σ (Fin n) (λ x → Fin (f (suc x)))
+    recurse = Σiso n (λ x → f (suc x))
+    cases : (Fin (f zero) ⊎ Σ (Fin n) (λ x → Fin (f (suc x)))) ≅
+           Σ (Fin (suc n)) (λ x → Fin (f x))
+    φ cases (inj₁ z) = (zero , z)
+    φ cases (inj₂ (i , z)) = (suc i , z)
+    ψ cases (zero , z) = inj₁ z
+    ψ cases (suc i , z) = inj₂ (i , z)
