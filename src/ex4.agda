@@ -164,48 +164,37 @@ structural.
 If you need more hints, ask on moodle.
 -}
 
+-- From l15.agda
+CoItℕ∞ : (M → Maybe M) → M → ℕ∞
+pred∞ (CoItℕ∞ f x) with f x
+... | nothing = nothing
+... | just y = just (CoItℕ∞ f y)
 
--- _*∞1_ :  ℕ∞ → ℕ∞ → ℕ∞
--- pred∞ (m *∞1 n) with pred∞ m
--- ... | nothing = nothing
--- ... | just x with pred∞ n
--- ...          | nothing = nothing
--- ...          | just y = just (y +∞ (x *∞1 n))
+-- step n (j , k) tries decreasing j by 1, if it can't it decreases k by 1 (resetting j) if it can't do that then it returns nothing.
+-- This means that if m and n are both finite, then m *∞ n counts from n-1 to 0 m times, resulting in n * m.
+-- If n is infinite and m in non-zero then repeatedly calling pred∞ never terminates unless m.
+-- If m is infinite and n is non-zero and finite then it will count n values infinite times, meaning pred∞ never reaches nothing.
+-- If either n or m is zero∞ then we end up with zero∞.
+_*∞_ :  ℕ∞ → ℕ∞ → ℕ∞
+m *∞ n with pred∞ n
+... | nothing = zero∞
+... | just n' = CoItℕ∞ (step n') (zero∞ , m)
+  where
+    step : ℕ∞ → (ℕ∞ × ℕ∞) → Maybe (ℕ∞ × ℕ∞)
+    step n (j , k) with pred∞ j
+    ... | just j' =  just (j' , k)
+    ... | nothing with pred∞ k
+    ...      | just k' =  just (n , k')
+    ...      | nothing = nothing
 
--- _*∞2_ :  ℕ∞ → ℕ∞ → ℕ∞
--- pred∞ (m *∞2 n) with pred∞ m
--- ... | nothing = nothing
--- ... | just x with pred∞ n
--- ...          | nothing = nothing
--- ...          | just y = just ((y +∞ x) +∞ (x *∞2 y))
+-- Use *∞ to multiply two naturals. Should return the same as _*_.
+test-*∞ : ℕ → ℕ → ℕ
+test-*∞ m n = ℕ∞→ℕ! ((ℕ→ℕ∞ m) *∞ (ℕ→ℕ∞ n))
 
-_*∞3_ :  ℕ∞ → ℕ∞ → ℕ∞
-pred∞ (m *∞3 n) with (pred∞ m , pred∞ n)
-... | nothing , nothing = nothing
-... | nothing , just _ = nothing
-... | just m' , nothing = nothing
-... | just m' , just n' = just ((n' +∞ m') +∞ (m' *∞3 n'))
-
--- ℕ⊎∞ = Maybe ℕ
--- 
--- data ℕ≤ (n : ℕ∞) : Set  where
---   coinductive
---   -- constructor suc_
---   field
---     limit : ℕ≤ → ℕ∞
--- 
--- ℕ∞≤ : (n : ℕ⊎∞) → (ℕ∞ × )
-
-
-_*∞_ : ℕ∞ → ℕ∞ → ℕ∞
-_*∞_ = _*∞3_
-
-
-
-x0 = ℕ∞→ℕ! (ℕ→ℕ∞ 0 *∞ ℕ→ℕ∞ 6)
-x1 = ℕ∞→ℕ! (ℕ→ℕ∞ 3 *∞ ℕ→ℕ∞ 0)
-x2 = ℕ∞→ℕ! (ℕ→ℕ∞ 5 *∞ ℕ→ℕ∞ 1)
-x3 = ℕ∞→ℕ! (ℕ→ℕ∞ 1 *∞ ℕ→ℕ∞ 1)
+x0 = test-*∞ 0 6 -- 0
+x1 = test-*∞ 3 0 -- 0
+x2 = test-*∞ 5 1 -- 5
+x3 = test-*∞ 9 4 -- 36
 
 {- My unit-test -}
 x3*5 = ℕ∞→ℕ! (ℕ→ℕ∞ 3 *∞ ℕ→ℕ∞ 5)
