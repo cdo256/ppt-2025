@@ -142,10 +142,6 @@ repeat-v : {A : Set} → {n : ℕ} → A → Vec A n
 repeat-v {A} {zero} x = []
 repeat-v {A} {suc n} x = x ∷ (repeat-v {A} {n} x)
 
--- append-v : {A : Set} → {n : ℕ} → A → Vec A n → Vec A (suc n)
--- append-v x [] = x ∷ []
--- append-v x (y ∷ ys) = y ∷ append-v x ys
-
 append-mv : {m n : ℕ} → Matrix m n → Vector m → Matrix m (suc n)
 append-mv [] [] = []
 append-mv (xs ∷ xss) (y ∷ ys) =
@@ -178,15 +174,15 @@ record _≅_ (A B : Set) : Set where
   field
     φ : A → B -- \phi
     ψ : B → A -- \psi
-    --eq₁ : ψ ∘ φ ≡ id
-    --eq₂ : φ ∘ ψ ≡ id
+    -- eq₁ : ψ ∘ φ ≡ id
+    -- eq₂ : φ ∘ ψ ≡ id
 
 open _≅_ public
 
 -- Just some practice :)
-id' : {A : Set} → A ≅ A
-id' .φ = λ x → x
-id' .ψ = λ x → x
+refl : {A : Set} → A ≅ A
+refl .φ = λ x → x
+refl .ψ = λ x → x
 
 sym : {A B : Set} → A ≅ B → B ≅ A
 sym ab .φ = ψ ab
@@ -195,6 +191,10 @@ sym ab .ψ = φ ab
 trans : {A B C : Set} → A ≅ B → B ≅ C → A ≅ C
 trans ab bc .φ = λ a → (φ bc (φ ab a))
 trans ab bc .ψ = λ c → (ψ ab (ψ bc c))
+
+infixl 30 _∘̰_
+_∘̰_ : {A B C : Set} → A ≅ B → B ≅ C → A ≅ C
+_∘̰_ = trans
 
 variable m n : ℕ
 
@@ -245,28 +245,34 @@ plus-eq : (Fin m ⊎ Fin n) ≅ Fin (m + n)
   Σ (Fin (suc n)) (λ x → Fin (f x))
 -}
 
-left-lift-≅ : {A B C : Set} → A ≅ B → (C ⊎ A) ≅ (C ⊎ B)
-φ (left-lift-≅ a≅b) (inj₁ c) = inj₁ c
-φ (left-lift-≅ a≅b) (inj₂ a) = inj₂ (φ a≅b a)
-ψ (left-lift-≅ a≅b) (inj₁ c) = inj₁ c
-ψ (left-lift-≅ a≅b) (inj₂ b) = inj₂ (ψ a≅b b)
+lift-⊎ : {A B A' B' : Set} → A ≅ A' → B ≅ B' → (A ⊎ B) ≅ (A' ⊎ B')
+φ (lift-⊎ a≅a' b≅b') (inj₁ a) = inj₁ (φ a≅a' a)
+φ (lift-⊎ a≅a' b≅b') (inj₂ b) = inj₂ (φ b≅b' b)
+ψ (lift-⊎ a≅a' b≅b') (inj₁ a') = inj₁ (ψ a≅a' a')
+ψ (lift-⊎ a≅a' b≅b') (inj₂ b') = inj₂ (ψ b≅b' b')
+
+fin0≅⊥ : Fin 0 ≅ ⊥
+φ fin0≅⊥ ()
+ψ fin0≅⊥ ()
+
+Σ∅≅⊥ : {F : Fin 0 → Set} → Σ (Fin 0) F ≅ ⊥
+φ Σ∅≅⊥ ()
+ψ Σ∅≅⊥ ()
 
 Σiso : (n : ℕ)(f : Fin n → ℕ) →
   Fin (Σℕ n f) ≅ Σ (Fin n) (λ x → Fin (f x))
-φ (Σiso zero f) ()
-ψ (Σiso zero f) ()
-Σiso (suc n) f = trans (trans (sym plus-eq) (left-lift-≅ recurse)) cases
+Σiso zero f = fin0≅⊥ ∘̰ sym Σ∅≅⊥
+Σiso (suc n) f = sym plus-eq ∘̰ lift-⊎ refl recurse ∘̰ cases
   where
     recurse : Fin (Σℕ n (λ x → f (suc x))) ≅
            Σ (Fin n) (λ x → Fin (f (suc x)))
     recurse = Σiso n (λ x → f (suc x))
     cases : (Fin (f zero) ⊎ Σ (Fin n) (λ x → Fin (f (suc x)))) ≅
-           Σ (Fin (suc n)) (λ x → Fin (f x))
+            Σ (Fin (suc n)) (λ x → Fin (f x))
     φ cases (inj₁ z) = (zero , z)
     φ cases (inj₂ (i , z)) = (suc i , z)
     ψ cases (zero , z) = inj₁ z
     ψ cases (suc i , z) = inj₂ (i , z)
-
 
 {- some test cases -}
 
@@ -285,3 +291,104 @@ tiso2 = ψ (Σiso 5 fin→ℕ) (φ (Σiso 5 fin→ℕ) (suc (suc zero)))
 {- If you still don't feel challenged, do Π as well. -}
 -- -}
 
+lift-× : {A B A' B' : Set} → A ≅ A' → B ≅ B' → (A × B) ≅ (A' × B')
+φ (lift-× a≅a' b≅b') (a , b) = (φ a≅a' a , φ b≅b' b)
+ψ (lift-× a≅a' b≅b') (a' , b') = (ψ a≅a' a' , ψ b≅b' b')
+
+distr-l : {A B C : Set} → ((A ⊎ B) × C) ≅ ((A × C) ⊎ (B × C))
+φ distr-l (inj₁ a , c) = inj₁ (a , c)
+φ distr-l (inj₂ b , c) = inj₂ (b , c)
+ψ distr-l (inj₁ (a , c)) = inj₁ a , c
+ψ distr-l (inj₂ (b , c)) = inj₂ b , c
+
+distr-r : {A B C : Set} → (C × (A ⊎ B)) ≅ ((C × A) ⊎ (C × B))
+φ distr-r (c , inj₁ a) = inj₁ (c , a)
+φ distr-r (c , inj₂ b) = inj₂ (c , b)
+ψ distr-r (inj₁ (c , a)) = c , inj₁ a
+ψ distr-r (inj₂ (c , b)) = c , inj₂ b
+
+
+Πℕ : (n : ℕ) → (Fin n → ℕ) → ℕ
+Πℕ zero f = 1
+Πℕ (suc n) f = f zero * Πℕ n (λ x → f (suc x))
+
+{-
+   (Fin (suc m) × Fin n)
+ ≅ (def of +)
+   (Fin (m + 1) × Fin n)
+ ≅ (plus-eq)
+   (Fin m ⊎ Fin 1) × Fin n
+ ≅ (distr x over ⊎)
+   (Fin m × Fin n) ⊎ (Fin 1 × Fin n)
+ ≅ (Fin 1)
+   (Fin m × Fin n) ⊎ Fin n
+ ≅ (recurse)
+   Fin (m * n) ⊎ Fin n
+ ≅ (plus-eq)
+   Fin (m * n + n)
+ ≅ (1 is identity over *)
+   Fin (m * n + 1 * n)
+ ≅ (* distributes over +)
+   Fin ((m + 1) * n)
+ = (def of +)
+   Fin ((suc m) * n)
+-}
+
+×⊥ : (⊥ × A) ≅ ⊥
+φ ×⊥ ()
+ψ ×⊥ ()
+
+×1 : (Fin 1 × A) ≅ A
+φ ×1 (zero , x) = x
+ψ ×1 x = (zero , x)
+
+×0 : (Fin 0 × A) ≅ Fin 0
+-- ×0 = lift-× fin0≅⊥ refl ∘̰ ×⊥ ∘̰  sym fin0≅⊥
+φ ×0 (() , _)
+ψ ×0 ()
+
+mul-eq : (Fin m × Fin n) ≅ Fin (m * n)
+mul-eq {m = zero} = ×0
+mul-eq {m = suc m'} =
+    lift-× (sym plus-eq) refl
+  ∘̰ distr-l
+  ∘̰ lift-⊎ ×1 mul-eq
+  ∘̰ plus-eq
+
+{-
+  Fin (Πℕ (suc n) f)
+= (definition of Πℕ)
+  Fin (f 0 * (Πℕ n (λ x → f (suc x))))
+≅ (mul-eq)
+  Fin (f 0) × Fin (Πℕ n (λ x → f (suc x)))
+≅ (recurse Πiso)
+  Fin (f 0) × Π (Fin n) (λ x → Fin (f (suc x)) x)
+≅ ?
+  Π (Fin (suc n)) (λ x → Fin (f x))
+-}
+
+
+Πiso : (n : ℕ)(f : Fin n → ℕ) →
+  Fin (Πℕ n f) ≅ Π (Fin n) (λ x → Fin (f x))
+φ (Πiso zero f) zero ()
+ψ (Πiso zero f) _ = zero
+Πiso (suc n) f = sym mul-eq ∘̰ lift-× refl (Πiso n (λ x → f (suc x))) ∘̰ join
+    where
+      join : (Fin (f zero) × Π (Fin n) (λ x → Fin (f (suc x)))) ≅
+        Π (Fin (suc n)) (λ x → Fin (f x))
+      join .φ (a , g) = λ {zero → a ; (suc b) → g b}
+      join .ψ g = g zero , λ x → g (suc x)
+
+{- some test cases -}
+g : Fin 3 → ℕ
+g x = (suc (fin→ℕ x))
+tpiso1 : Π (Fin 3) λ x → Fin (g x)
+tpiso1 = φ (Πiso 3 g) (ψ (Πiso 3 g) λ x → zero) 
+  -- where
+  --  f : Π (Fin 3) (λ x → Fin (fin→ℕ x))
+  --  f zero = suc (suc (suc zero))
+  --  f (suc zero) = suc (suc (suc (suc zero)))
+  --  f (suc (suc zero)) = zero
+
+-- tpiso2 : Fin (Πℕ 5 fin→ℕ)
+-- tpiso2 = ψ (Πiso 5 fin→ℕ) (φ (Πiso 5 fin→ℕ) (suc (suc zero)))
