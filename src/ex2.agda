@@ -45,15 +45,28 @@ p3 (inj₁ p) pq = inj₂(pq p)
 p3 (inj₂ np) pq = inj₁ np
 
 -- Classically valid, but not intuitionistically valid.
-p4 : RAA Q → ¬ P ∨ Q ⇒ (P ⇒ Q)
-p4 raa (inj₁ np) p =  raa (λ nq → (np p))
-p4 raa (inj₂ q) p = q
+-- p4 : RAA Q → ¬ P ∨ Q ⇒ (P ⇒ Q)
+-- p4 raa (inj₁ np) p =  raa (λ nq → (np p))
+-- p4 raa (inj₂ q) p = q
+
+p4 : ¬ P ∨ Q ⇒ (P ⇒ Q)
+p4 (inj₁ np) p = case⊥ (np p)
+p4 (inj₂ q) p = q
+
 
 -- (((P → ⊥) → ⊥) → P) → (((P → (P → ⊥)) , ((P → ⊥) → P)) → ⊥)
-p5 : RAA P → ¬ (P ⇔ ¬ P)
-p5 nnp→p (pnp , npp) =
-  let p = (nnp→p (λ np → pnp (npp np) (npp np)))
-  in pnp p p
+-- p5 : RAA P → ¬ (P ⇔ ¬ P)
+-- p5 nnp→p (pnp , npp) =
+--   let p = (nnp→p (λ np → pnp (npp np) (npp np)))
+--   in pnp p p
+   
+p5 : ¬ (P ⇔ ¬ P)
+p5 {P = P} (pnp , npp) =
+  let np : ¬ P
+      np = λ p →  pnp p p
+      p : P
+      p = npp np
+  in np p
   
 -- Not classically valid, because,
 -- ¬ (⊤ ∨ ¬ ⊤) = ¬ ⊤ = ⊥
@@ -63,6 +76,8 @@ p5 nnp→p (pnp , npp) =
 -- (((P → ⊥) → ⊥) → ⊥) → (P → ⊥)
 p7 :  ¬ (¬ (¬ P)) ⇒ ¬ P
 p7 nnnp p = nnnp (λ np → np p)
+
+-- NOTE: Possible with just one of TND P or RAA (((P ⇒ Q) ⇒ P) ⇒ P)
 
 -- Possible with fewer postulates. See note below.
 p8 : TND P → RAA (P ⇒ Q) → RAA Q → ((P ⇒ Q) ⇒ P) ⇒ P

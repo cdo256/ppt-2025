@@ -137,11 +137,14 @@ sum-r = RR zero (_+_)
 
 infix 50 _≤-i_
 _≤-i_ : ℕ → ℕ → Bool
-_≤-i_ n m = eq zero (It n pred' m)
-  where
-    pred' : ℕ → ℕ
-    pred' (suc m) = m
-    pred' zero = zero
+_≤-i_ = It (λ _ → true) λ m≤ → RR false λ n _ → m≤ n
+
+-- _≤-i_ : ℕ → ℕ → Bool
+-- _≤-i_ n m = eq zero (It n pred' m)
+--   where
+--     pred' : ℕ → ℕ
+--     pred' (suc m) = m
+--     pred' zero = zero
 
 -- Define a function max that calculates the maximum of 2 numbers
 max-i : ℕ → ℕ → ℕ
