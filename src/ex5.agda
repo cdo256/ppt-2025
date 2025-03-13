@@ -367,7 +367,6 @@ mul-eq {m = suc m'} =
   Π (Fin (suc n)) (λ x → Fin (f x))
 -}
 
-
 Πiso : (n : ℕ)(f : Fin n → ℕ) →
   Fin (Πℕ n f) ≅ Π (Fin n) (λ x → Fin (f x))
 φ (Πiso zero f) zero ()
@@ -380,15 +379,36 @@ mul-eq {m = suc m'} =
       join .ψ g = g zero , λ x → g (suc x)
 
 {- some test cases -}
-g : Fin 3 → ℕ
-g x = (suc (fin→ℕ x))
-tpiso1 : Π (Fin 3) λ x → Fin (g x)
-tpiso1 = φ (Πiso 3 g) (ψ (Πiso 3 g) λ x → zero) 
-  -- where
-  --  f : Π (Fin 3) (λ x → Fin (fin→ℕ x))
-  --  f zero = suc (suc (suc zero))
-  --  f (suc zero) = suc (suc (suc (suc zero)))
-  --  f (suc (suc zero)) = zero
+g1 : Fin 4 → ℕ
+g1 x = (suc (fin→ℕ x))
+f1 : Π (Fin 4) (λ x → Fin (g1 x))
+f1 zero = zero -- x24
+f1 (suc zero) = suc zero -- x12
+f1 (suc (suc zero)) = (suc zero) -- x4
+f1 (suc (suc (suc zero))) = zero -- x1
 
--- tpiso2 : Fin (Πℕ 5 fin→ℕ)
--- tpiso2 = ψ (Πiso 5 fin→ℕ) (φ (Πiso 5 fin→ℕ) (suc (suc zero)))
+-- suc (suc (suc zero))
+tpiso1 : Fin (Πℕ 4 g1)
+tpiso1 = ψ (Πiso 4 g1) f1
+tpiso1'' : ℕ
+tpiso1'' = fin→ℕ tpiso1
+
+tpiso1' : Π (Fin 4) (λ x → Fin (g1 x))
+tpiso1' = φ (Πiso 4 g1) tpiso1
+
+g2 : Fin 5 → ℕ
+g2 x = (suc (fin→ℕ x))
+f2 : Π (Fin 5) (λ x → Fin (g2 x))
+f2 zero = zero
+f2 (suc zero) = zero
+f2 (suc (suc zero)) = (suc ((suc zero)))
+f2 (suc (suc (suc zero))) = (suc (suc zero))
+f2 (suc (suc (suc (suc zero)))) = suc (zero)
+
+tpiso2 : Fin (Πℕ 5 g2)
+tpiso2 = ψ (Πiso 5 g2) f2
+tpiso2'' : ℕ
+tpiso2'' = fin→ℕ tpiso2
+
+tpiso2' : Π (Fin 5) (λ x → Fin (g2 x))
+tpiso2' = φ (Πiso 5 g2) tpiso2
