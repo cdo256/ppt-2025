@@ -3,53 +3,29 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    #cornelis.url = "github:agda/cornelis";
-    #cornelis.inputs.nixpkgs.follows = "nixpkgs";
+    just-agda.url = "github:cdo256/just-agda";
   };
 
   outputs =
     {
       self,
       nixpkgs,
+      just-agda,
     }:
     let
-      pkgs = import nixpkgs {
-        system = "x86_64-linux";
-        overlays = [
-          #cornelis.overlays.cornelis
-          (self: super: {
-            haskellPackages = super.haskellPackages.override {
-              overrides = self: super: {
-                Agda = super.Agda.overrideAttrs (oldAttrs: {
-                  separateDebugInfo = true;
-                });
-              };
-            };
-          })
-        ];
-      };
-      texlive = pkgs.texliveFull.withPackages (ps: [
-        ps.latexmk
-        ps.pgf # TikZ
-        pkgs.inkscape
-        #ps.luatex
-      ]);
-
-      agda = pkgs.agda.withPackages (ps: [
-        ps.standard-library
-      ]);
+      systems = [ "x86_64-linux" ];
+      forEachSystem = fn: nixpkgs.lib.genAttrs systems (system: fn nixpkgs.legacyPackages.${system});
     in
     {
-      packages.x86_64-linux.agda = agda;
-
-      devShells.x86_64-linux.default = pkgs.mkShell {
-        buildInputs = [
-          agda
-          texlive
-          #cornelis.x86_64-linux.packages.cornelis
-          #pkgs.haskellPackages.ghci_8_10_2
-          #pkgs.ghc
-        ];
-      };
+      packages = forEachSystem (pkgs: {
+        default = just-agda.packages.${pkgs.system}.default;
+      });
+      devShells = forEachSystem (pkgs: {
+        default = pkgs.mkShell {
+          buildInputs = [
+            just-agda.packages.${pkgs.system}.default
+          ];
+        };
+      });
     };
 }
