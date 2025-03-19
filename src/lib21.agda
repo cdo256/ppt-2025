@@ -23,7 +23,7 @@ curry f a b = f (a , b) -- C-c C-,
 uncurry : (A → B → C) → (A × B → C)
 uncurry f (a , b) = f a b
 
-infixl 5 _⊎_ 
+infixl 5 _⊎_
 data _⊎_(A B : Set) : Set where
   inj₁ : A → A ⊎ B
   inj₂ : B → A ⊎ B
@@ -338,3 +338,12 @@ J : (M : {a b : A} → (a ≡ b) → Set)
     → ({a : A} → M (refl {a = a}))
     → {a b : A}(p : a ≡ b) → M p
 J M m refl = m 
+
+-- elim
+
+Elim : (M : ℕ → Set)
+     → M zero
+     → ((m : ℕ) → M m → M (suc m))
+     → (n : ℕ) → M n
+Elim M m-z m-s zero = m-z
+Elim M m-z m-s (suc n) = m-s n (Elim M m-z m-s n)
