@@ -98,6 +98,17 @@ p09' p09 = p09 (true , tt) (true , tt) false P'
 -- P' true = ⊤
 -- P' false = ⊥
 
+-- A≠∅ → ∃A. ¬Py ∨ ∀x∈A. Px
+-- A≠∅ → ∃A. ∀x∈A. ¬Py ∨ Px
+-- so p10 -> CLASS
+
+-- Suppose class
+--   Then ¬Px ∨ Px
+--   Given A≠Ø, take z ∈ A
+--     Have ∀P or ¬∀P
+--     If ∀P then easy.
+--     If ¬∀P then 
+
 P10 = {A : Set}{P : A → Prop} →
       (∃[ x ∈ A ] ⊤) → (∃[ y ∈ A ] (P y → ∀[ x ∈ A ] P x))
 p10 : {A : Set}{P' : A → Prop} → CLASS → P10
@@ -145,20 +156,33 @@ J-ML = {A : Set}(M : {a b : A} → (a ≡ b) → Set)
     → ({a : A} → M (refl {a = a}))
     → {a b : A}(p : a ≡ b) → M p
 
+-- If M : (a ≡ b) → Set
+--    ∀a. M (refl a)
+--    p : a ≡ b
+-- Then M p
+
 -- J-PM is a variant introduced by Paulin-Mohring
 -- also called based path induction
 J-PM = {A : Set}{a : A}(M : {b : A} → (a ≡ b) → Set)
     → (M (refl {a = a}))
     → {b : A}(p : a ≡ b) → M p
 
--- in the following do not use mattern matching or any function that has been
+-- If
+--    M : (a ≡ b) → Set
+--    ∀a. M (refl a)
+--    p : a ≡ b
+-- Then M p
+
+-- in the following do not use mattern patching or any function that has been
 -- derived using pattern matching - this includes J from the library.
 
 module _(j-ml : J-ML) where
 
   -- you can only use j-ml here
   j-pm : J-PM
-  j-pm = {!!}
+  -- j-pm {A}{a} = λ M Mrefl ab → j-ml (λ a₁b₁ → {!!}) {!!} ab
+  -- j-pm {A}{a} M = λ Mrefl p → j-ml {A} (λ {a} {b} ab → {!!}) Mrefl {!M a!} 
+  j-pm {A}{a} = λ M Mrefl p → j-ml (λ {a'} {b} a'b → {!!}) Mrefl {!M a!} 
 
 
 module _(j-pm : J-PM) where
