@@ -31,9 +31,9 @@ p01 : P01 → ⊥
 p01 p = let
     b , z = p {A = Bool} {B = Bool} {R = R'} λ {false → false , tt ; true → true , tt }
     p₂ : R' true true → R' true false
-    p₂ rtt = {! !}
+    p₂ rtt = λ ()
   in
-    {!!}
+    λ ()
   where
     R' : Bool → Bool → Prop
     R' true true = ⊤
@@ -182,17 +182,19 @@ module _(j-ml : J-ML) where
   j-pm : J-PM
   -- j-pm {A}{a} = λ M Mrefl ab → j-ml (λ a₁b₁ → {!!}) {!!} ab
   -- j-pm {A}{a} M = λ Mrefl p → j-ml {A} (λ {a} {b} ab → {!!}) Mrefl {!M a!} 
-  j-pm {A}{a} = λ M Mrefl p → j-ml (λ {a'} {b} a'b → {!!}) Mrefl {!M a!} 
+  -- j-pm {A}{a} = λ M Mrefl p → j-ml (λ {a'} {b} a'b → {!!}) Mrefl {!M a!} 
+  -- j-pm = λ M m-refl p → j-ml (λ {a = a₁} {b = b₁} z → M p) (λ {a₁} → j-ml {!!} {!!} {!!}) p 
+  -- j-pm {A} {a} b-ab-M m-refl {c} p = j-ml {A} (λ {d} {e} z → b-ab-M {c} p) (λ {d} → {!!}) {!!}
+  j-pm {A} {a} b-ab-M m-refl {c} refl = j-ml {A} (λ {d} {e} z → b-ab-M {c} refl) (λ {d} → m-refl) refl
 
+-- subst-it : (P : A → Set) → {a b : A} → a ≡ b → P a → P b
+-- subst-it P = ?
+
+-- cong : (f : A → B){a b : A} → a ≡ b → f a ≡ f b
+-- cong f refl = refl
 
 module _(j-pm : J-PM) where
-
   -- you can only use j-pm here
   j-ml : J-ML
-  j-ml = {!!}
-
-
-
-
-
+  j-ml {A} = λ M M-refl refl → j-pm (λ {c} z → M refl) ((λ x → {!!}) (cong (\x → x) refl)) refl 
 
