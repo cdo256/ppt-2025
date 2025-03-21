@@ -136,20 +136,20 @@ P10 = {A : Set}{P : A → Prop}
     → (∃[ x ∈ A ] ⊤)
     → (∃[ y ∈ A ] (P y → ∀[ x ∈ A ] P x))
 p10 : CLASS → P10
-p10 raa {A}{P'} (z , _) with (raa→tnd {P = ∃[ y ∈ A ] ¬ P' y} raa)
-... | inj₁ (x , npx) = x , λ px v → case⊥ (npx px)
-... | inj₂ ¬∃¬p = z , λ pz → raa (λ ¬∀p → ¬∃¬p (z , λ pz → ¬∀p λ x → {!!})) 
+-- p10 raa {A}{P'} (z , _) with (raa→tnd {P = ∃[ y ∈ A ] ¬ P' y} raa)
+-- ... | inj₁ (x , npx) = x , λ px v → case⊥ (npx px)
+-- ... | inj₂ ¬∃¬p = z , λ pz → raa (λ ¬∀p → ¬∃¬p (z , λ pz → ¬∀p λ x → {!!})) 
 
-p10' : {A : Set}{P : A → Prop}{w z : A}
+p10' : {A : Set}{P : A → Prop}{z : A}
      → CLASS
-     → P w
      → ∃[ y ∈ A ] (P y → ∀[ x ∈ A ] P x)
 -- p10' {A} {P} {w} {z} raa pw with (raa→tnd {P = ∀[ x ∈ A ] P x} raa , raa→tnd {P = P z} raa)
-p10' {A} {P} {w} {z} raa pw with (raa→tnd {P = ∀[ x ∈ A ] P x} raa) | (raa→tnd {P = P z} raa)
-... | (inj₁ ∀p  | inj₁ pz) = w , (λ z₁ → ∀p)
-... | (inj₂ ¬∀p |  inj₁ pz) = {!!}
-... | (inj₁ ∀p  | inj₂ ¬pz) = {!!}
-... | (inj₂ ¬∀p |  inj₂ ¬pz) = {!!}
+p10' {A} {P} {z} raa with (raa→tnd {P = (∃[ x ∈ A ] ¬ P x)} raa) | (raa→tnd {P = P z} raa)
+... | inj₁ (u , ¬pu)  | _ = u , (λ v x → case⊥ (¬pu v))
+... | inj₂ ¬∃np |  inj₁ pz = z , (λ _ x → raa (λ v → ¬∃np (x , v)))
+... | inj₂ ¬∃np |  inj₂ ¬pz = z , (λ y x → raa (λ _ → ¬pz y))
+
+p10 raa (z , _) = p10' {z = z} raa  
 
 -- E¬P → ⊥
 --  |- WTS Px → ∀ z P z
