@@ -24,21 +24,22 @@ Note that case 2 can be a bit tricky because you have to construct
 a counterexample. However, using Bool and equality should be sufficient.
 -}
 
+-- Not possible. Suppose R is ≡
 P01 = {A B : Set}{R : A → B → Prop} →
       ((∀[ x ∈  A ] ∃[ y ∈ B ] R x y)) →
       (∃[ y ∈ B ] ∀[ x ∈ A ] R x y)
 p01 : P01 → ⊥
-p01 p = let
-    b , z = p {A = Bool} {B = Bool} {R = R'} λ {false → false , tt ; true → true , tt }
-    p₂ : R' true true → R' true false
-    p₂ rtt = λ ()
-  in
-    λ ()
+p01 p = q
   where
     R' : Bool → Bool → Prop
     R' true true = ⊤
     R' false false  = ⊤
     R' _ _ = ⊥
+    ∃∀R = p {A = Bool} {B = Bool} {R = R'} λ {false → false , tt ; true → true , tt }
+    q : ⊥
+    q with ∃∀R
+    ... | false , ∀R = ∀R true
+    ... | true , ∀R = ∀R false
 
 P02 = {A B : Set}{R : A → B → Prop} →
      (∃[ y ∈ B ] (∀[ x ∈ A ] R x y))
@@ -56,11 +57,16 @@ P04 = {A : Set}{P : A → Prop} →
 p04 : P04
 p04 = λ ∀¬p (x , px) → ∀¬p x px
 
+-- (¬∀P) → ∃¬P
 P05 = {A : Set}{P : A → Prop} →
       (¬ (∀[ x ∈ A ] P x)) → ∃[ x ∈ A ] ¬ (P x)
 p05 : CLASS → P05
--- p05 raa ¬∀P = raa (λ ¬¬∃P → ¬¬∃P (λ (x , px) → {!!}))
-p05 raa ¬∀P = raa (λ ¬∃¬P → ¬∃¬P {!!})
+p05 raa {A} {P} ¬∀p with (raa→tnd {∃[ x ∈ A ] ¬ (P x)} raa)
+... | inj₁ (x , ¬px) = x , λ px → ¬px px
+... | inj₂ ¬∃¬p = z , λ _ → ¬∃¬p (z , λ _ → ¬∀p λ y → raa (λ w → ¬∃¬p (y , w))) 
+  where
+    z : A
+    z = raa (λ na → ¬∀p (λ a → raa (λ _ → na a))) 
 
 P06 = {A : Set}{P : A → Prop} →
       (∃[ x ∈ A ] ¬ (P x)) → (¬ (∀[ x ∈ A ] P x))
@@ -98,9 +104,6 @@ p09' p09 = p09 (true , tt) (true , tt) false P'
 -- P' true = ⊤
 -- P' false = ⊥
 
--- A≠∅ → ∃A. ¬Py ∨ ∀x∈A. Px
--- A≠∅ → ∃A. ∀x∈A. ¬Py ∨ Px
--- so p10 -> CLASS
 
 -- Suppose class
 --   Then ¬Px ∨ Px
@@ -109,16 +112,44 @@ p09' p09 = p09 (true , tt) (true , tt) false P'
 --     If ∀P then easy.
 --     If ¬∀P then 
 
-P10 = {A : Set}{P : A → Prop} →
-      (∃[ x ∈ A ] ⊤) → (∃[ y ∈ A ] (P y → ∀[ x ∈ A ] P x))
-p10 : {A : Set}{P' : A → Prop} → CLASS → P10
-p10 {A}{P'} raa (z , _) =
-    {!!}
-   where
-    red1 : (∃[ x ∈ A ] (¬ P' x)) → (∃[ y ∈ A ] (P' y → ∀[ x ∈ A ] P' x))
-    red1 (x , ¬px) = x , λ px → case⊥ (¬px px)
-    red2 : ¬ ( ∃[ x ∈ A ] (¬ P' x)) → (∃[ y ∈ A ] (P' y → ∀[ x ∈ A ] P' x))
-    red2 ¬∃¬P = raa λ ¬∃ → {!¬∃ λ y → ? !}
+-- P10 = {A : Set}{P : A → Prop} →
+--       (∃[ x ∈ A ] ⊤) → (∃[ y ∈ A ] (P y → ∀[ x ∈ A ] P x))
+-- p10 : {A : Set}{P' : A → Prop} → CLASS → P10
+-- p10 {A}{P'} raa (z , _) =
+--     {!!}
+--    where
+--     red1 : (∃[ x ∈ A ] (¬ P' x)) → (∃[ y ∈ A ] (P' y → ∀[ x ∈ A ] P' x))
+--     red1 (x , ¬px) = x , λ px → case⊥ (¬px px)
+--     red2 : ¬ ( ∃[ x ∈ A ] (¬ P' x)) → (∃[ y ∈ A ] (P' y → ∀[ x ∈ A ] P' x))
+--     red2 ¬∃¬P = raa λ ¬∃ → {!!}
+
+-- ∀p ∨ ¬∀p
+-- py ∨ ¬py
+
+
+
+-- A≠∅ → ∃A. Py → ∀x∈A. Px
+-- A≠∅ → ∃A. ∀x∈A. ¬Py ∨ Px
+-- A≠∅ → ∃A. ∀x∈A. ¬Py ∨ Px
+-- so p10 -> CLASS
+P10 = {A : Set}{P : A → Prop}
+    → (∃[ x ∈ A ] ⊤)
+    → (∃[ y ∈ A ] (P y → ∀[ x ∈ A ] P x))
+p10 : CLASS → P10
+p10 raa {A}{P'} (z , _) with (raa→tnd {P = ∃[ y ∈ A ] ¬ P' y} raa)
+... | inj₁ (x , npx) = x , λ px v → case⊥ (npx px)
+... | inj₂ ¬∃¬p = z , λ pz → raa (λ ¬∀p → ¬∃¬p (z , λ pz → ¬∀p λ x → {!!})) 
+
+p10' : {A : Set}{P : A → Prop}{w z : A}
+     → CLASS
+     → P w
+     → ∃[ y ∈ A ] (P y → ∀[ x ∈ A ] P x)
+-- p10' {A} {P} {w} {z} raa pw with (raa→tnd {P = ∀[ x ∈ A ] P x} raa , raa→tnd {P = P z} raa)
+p10' {A} {P} {w} {z} raa pw with (raa→tnd {P = ∀[ x ∈ A ] P x} raa) | (raa→tnd {P = P z} raa)
+... | (inj₁ ∀p  | inj₁ pz) = w , (λ z₁ → ∀p)
+... | (inj₂ ¬∀p |  inj₁ pz) = {!!}
+... | (inj₁ ∀p  | inj₂ ¬pz) = {!!}
+... | (inj₂ ¬∀p |  inj₂ ¬pz) = {!!}
 
 -- E¬P → ⊥
 --  |- WTS Px → ∀ z P z
@@ -187,10 +218,10 @@ module _(j-ml : J-ML) where
   -- j-pm {A} {a} b-ab-M m-refl {c} p = j-ml {A} (λ {d} {e} z → b-ab-M {c} p) (λ {d} → {!!}) {!!}
   j-pm {A} {a} b-ab-M m-refl {c} refl = j-ml {A} (λ {d} {e} z → b-ab-M {c} refl) (λ {d} → m-refl) refl
 
--- subst-it : (P : A → Set) → {a b : A} → a ≡ b → P a → P b
+-- subst-it : {A : Set}(P : A → Set) → {a b : A} → a ≡ b → P a → P b
 -- subst-it P = ?
 
--- cong : (f : A → B){a b : A} → a ≡ b → f a ≡ f b
+-- cong : {A B C : Set}(f : A → B){a b : A} → a ≡ b → f a ≡ f b
 -- cong f refl = refl
 
 module _(j-pm : J-PM) where
