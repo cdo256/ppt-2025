@@ -15,12 +15,12 @@ record _×_ (A B : Set) : Set where
 
 open _×_ public
 
-variable
-  A B C : Set
+-- variable
+--   A B C : Set
 
-curry : (A × B → C) → (A → B → C)
+curry : {A B C : Set} → (A × B → C) → (A → B → C)
 curry f a b = f (a , b) -- C-c C-,
-uncurry : (A → B → C) → (A × B → C)
+uncurry : {A B C : Set} → (A → B → C) → (A × B → C)
 uncurry f (a , b) = f a b
 
 infixl 5 _⊎_ 
@@ -28,14 +28,14 @@ data _⊎_(A B : Set) : Set where
   inj₁ : A → A ⊎ B
   inj₂ : B → A ⊎ B
 
-case : (A → C) → (B → C) → (A ⊎ B → C)
+case : {A B C : Set} → (A → C) → (B → C) → (A ⊎ B → C)
 case f g (inj₁ a) = f a
 case f g (inj₂ b) = g b
 
-uncase : (A ⊎ B → C) → (A → C) × (B → C)
+uncase : {A B C : Set} → (A ⊎ B → C) → (A → C) × (B → C)
 uncase f = (λ a → f (inj₁ a)) , λ b → f (inj₂ b)
 
-case' : (A → C) × (B → C) → (A ⊎ B → C)
+case' : {A B C : Set} → (A → C) × (B → C) → (A ⊎ B → C)
 case' = uncurry case
 
 -- Bool
@@ -44,7 +44,7 @@ data Bool : Set where
   false : Bool
   true : Bool
 
-if_then_else_ : Bool → A → A → A
+if_then_else_ : {A : Set} → Bool → A → A → A
 if false then x else y = y
 if true then x else y = x
 
@@ -59,7 +59,7 @@ record ⊤ : Set where
 
 data ⊥ : Set where
 
-case⊥ : ⊥ → A
+case⊥ : {A : Set} → ⊥ → A
 case⊥ ()
 
 Prop = Set
@@ -170,11 +170,11 @@ data List (A : Set) : Set where
   [] : List A
   _∷_ : A → List A → List A -- \::  
 
-_++_ : List A → List A → List A
+_++_ : {A : Set} → List A → List A → List A
 [] ++ bs = bs
 (a ∷ as) ++ bs = a ∷ (as ++ bs)
 
-ItList : M → (A → M → M) → List A → M
+ItList : {A : Set} → M → (A → M → M) → List A → M
 ItList m-nil m-cons [] = m-nil
 ItList m-nil m-cons (a ∷ as) = m-cons a (ItList m-nil m-cons as)
 
@@ -231,7 +231,7 @@ from : ℕ → Stream ℕ
 hd (from n) = n
 tl (from n) = from (suc n)
 
-take : Stream A → ℕ → List A
+take : {A : Set} → Stream A → ℕ → List A
 take as zero = []
 take as (suc n) = hd as ∷ take (tl as) n
 
@@ -245,7 +245,7 @@ data Vec (A : Set) : ℕ → Set where
   [] : Vec A 0
   _∷_ : {n : ℕ} → A → Vec A n → Vec A (suc n)
 
-_++v_ : {m n : ℕ} → Vec A m → Vec A n → Vec A (m + n)
+_++v_ : {m n : ℕ}{A : Set} → Vec A m → Vec A n → Vec A (m + n)
 [] ++v bs = bs
 (a ∷ as) ++v bs = a ∷ (as ++v bs)
 
@@ -316,7 +316,7 @@ Ex A P = Σ[ x ∈ A ] (P x)
 syntax All A (λ x → P) = ∀[ x ∈ A ] P
 syntax Ex A (λ x → P) = ∃[ x ∈ A ] P
 
-variable PP QQ : A → Prop
+variable PP QQ : {A : Set} → A → Prop
 
 {- equality -}
 
@@ -325,16 +325,16 @@ data _≡_ {A : Set} : A → A → Set where
 
 infix 4 _≡_
 
-sym : {a b : A} → a ≡ b → b ≡ a
+sym : {A : Set} → {a b : A} → a ≡ b → b ≡ a
 sym refl = refl
 
-trans : {a b c : A} → a ≡ b → b ≡ c → a ≡ c
+trans : {A : Set} → {a b c : A} → a ≡ b → b ≡ c → a ≡ c
 trans refl q = q
 
-cong : (f : A → B){a b : A} → a ≡ b → f a ≡ f b
+cong : {A B : Set} → (f : A → B){a b : A} → a ≡ b → f a ≡ f b
 cong f refl = refl
 
-J : (M : {a b : A} → (a ≡ b) → Set)
+J : {A : Set} → (M : {a b : A} → (a ≡ b) → Set)
     → ({a : A} → M (refl {a = a}))
     → {a b : A}(p : a ≡ b) → M p
 J M m refl = m 
