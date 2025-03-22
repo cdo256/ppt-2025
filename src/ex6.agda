@@ -70,7 +70,7 @@ p05 raa {A} {P} ¬∀p with (raa→tnd {∃[ x ∈ A ] ¬ (P x)} raa)
 
 P06 = {A : Set}{P : A → Prop} →
       (∃[ x ∈ A ] ¬ (P x)) → (¬ (∀[ x ∈ A ] P x))
--- P06 : ∃¬P → ∀P → ⊥
+-- ∃¬P → ∀P → ⊥
 p06 : P06
 p06 (x , ¬px) ∀p = ¬px (∀p x)
 
@@ -84,49 +84,21 @@ p07 ¬¬∀p x ¬px =
   in
     ¬¬∀p ¬∀p
 
+-- (∀x (¬Px → ⊥)) → ¬∀Px → ⊥
 P08 = {A : Set}{P : A → Prop} →
       (∀[ x ∈  A ] ¬ (¬ (P x))) → (¬ (¬ (∀[ x ∈ A ] P x)))
--- (∀x (¬Px → ⊥)) → ¬∀Px → ⊥
 p08 : CLASS → P08
 p08 raa = λ ∀¬¬p ¬∀p → ¬∀p λ x → raa (∀¬¬p x)
 
 P09 = {A : Set}{P : A → Prop} →
       (∃[ x ∈ A ] ⊤) → (∃[ x ∈ A ] P x) → ∀[ x ∈ A ] P x
--- ∃x → (∃P → ∀P)
+-- ∃A → ∃P → ∀P
 p09' : P09 → ⊥
-p09' p09 = p09 (true , tt) (true , tt) false P'
+p09' p09 = p09 (true , tt) (true , tt) false
   where
     P' : Bool → Prop
     P' true = ⊤
     P' false = ⊥
-
--- P' : Bool → Prop
--- P' true = ⊤
--- P' false = ⊥
-
-
--- Suppose class
---   Then ¬Px ∨ Px
---   Given A≠Ø, take z ∈ A
---     Have ∀P or ¬∀P
---     If ∀P then easy.
---     If ¬∀P then 
-
--- P10 = {A : Set}{P : A → Prop} →
---       (∃[ x ∈ A ] ⊤) → (∃[ y ∈ A ] (P y → ∀[ x ∈ A ] P x))
--- p10 : {A : Set}{P' : A → Prop} → CLASS → P10
--- p10 {A}{P'} raa (z , _) =
---     {!!}
---    where
---     red1 : (∃[ x ∈ A ] (¬ P' x)) → (∃[ y ∈ A ] (P' y → ∀[ x ∈ A ] P' x))
---     red1 (x , ¬px) = x , λ px → case⊥ (¬px px)
---     red2 : ¬ ( ∃[ x ∈ A ] (¬ P' x)) → (∃[ y ∈ A ] (P' y → ∀[ x ∈ A ] P' x))
---     red2 ¬∃¬P = raa λ ¬∃ → {!!}
-
--- ∀p ∨ ¬∀p
--- py ∨ ¬py
-
-
 
 -- A≠∅ → ∃A. Py → ∀x∈A. Px
 -- A≠∅ → ∃A. ∀x∈A. ¬Py ∨ Px
@@ -135,46 +107,15 @@ p09' p09 = p09 (true , tt) (true , tt) false P'
 P10 = {A : Set}{P : A → Prop}
     → (∃[ x ∈ A ] ⊤)
     → (∃[ y ∈ A ] (P y → ∀[ x ∈ A ] P x))
-p10 : CLASS → P10
--- p10 raa {A}{P'} (z , _) with (raa→tnd {P = ∃[ y ∈ A ] ¬ P' y} raa)
--- ... | inj₁ (x , npx) = x , λ px v → case⊥ (npx px)
--- ... | inj₂ ¬∃¬p = z , λ pz → raa (λ ¬∀p → ¬∃¬p (z , λ pz → ¬∀p λ x → {!!})) 
-
 p10' : {A : Set}{P : A → Prop}{z : A}
      → CLASS
      → ∃[ y ∈ A ] (P y → ∀[ x ∈ A ] P x)
--- p10' {A} {P} {w} {z} raa pw with (raa→tnd {P = ∀[ x ∈ A ] P x} raa , raa→tnd {P = P z} raa)
 p10' {A} {P} {z} raa with (raa→tnd {P = (∃[ x ∈ A ] ¬ P x)} raa) | (raa→tnd {P = P z} raa)
 ... | inj₁ (u , ¬pu)  | _ = u , (λ v x → case⊥ (¬pu v))
 ... | inj₂ ¬∃np |  inj₁ pz = z , (λ _ x → raa (λ v → ¬∃np (x , v)))
 ... | inj₂ ¬∃np |  inj₂ ¬pz = z , (λ y x → raa (λ _ → ¬pz y))
-
+p10 : CLASS → P10
 p10 raa (z , _) = p10' {z = z} raa  
-
--- E¬P → ⊥
---  |- WTS Px → ∀ z P z
---  |- Suppose ¬P x
---     | Then P y 
-
--- P y <= P x
--- P y minimal
--- 
--- ∃P → P y
--- ¬∃P → 
-
--- P x 
--- ∃A → ∃y ∀x (¬Py or Px)
--- y = true, x = false
--- ∀y ∃x (Py and ¬Px)
--- p10' : P10 → ⊥
--- p10' p10 with (p10 {A = Bool} {P = P'}) (true , tt)
--- ... | (true , q) = q tt false
--- ... | (false , q) = {!q  !}
--- let
---     (true , q) = (p10 {A = Bool} {P = P'}) (true , tt)
---     (false , q) = (
---     foo = q (P' y) false
---   in {!q (P' true) false!}
 
 {- Part 2 (20 %) -}
 
@@ -211,11 +152,6 @@ module _(j-ml : J-ML) where
 
   -- you can only use j-ml here
   j-pm : J-PM
-  -- j-pm {A}{a} = λ M Mrefl ab → j-ml (λ a₁b₁ → {!!}) {!!} ab
-  -- j-pm {A}{a} M = λ Mrefl p → j-ml {A} (λ {a} {b} ab → {!!}) Mrefl {!M a!} 
-  -- j-pm {A}{a} = λ M Mrefl p → j-ml (λ {a'} {b} a'b → {!!}) Mrefl {!M a!} 
-  -- j-pm = λ M m-refl p → j-ml (λ {a = a₁} {b = b₁} z → M p) (λ {a₁} → j-ml {!!} {!!} {!!}) p 
-  -- j-pm {A} {a} b-ab-M m-refl {c} p = j-ml {A} (λ {d} {e} z → b-ab-M {c} p) (λ {d} → {!!}) {!!}
   j-pm {A} {a} b-ab-M m-refl {c} refl = j-ml {A} (λ {d} {e} z → b-ab-M {c} refl) (λ {d} → m-refl) refl
 
 -- subst-it : {A : Set}(P : A → Set) → {a b : A} → a ≡ b → P a → P b
@@ -227,5 +163,5 @@ module _(j-ml : J-ML) where
 module _(j-pm : J-PM) where
   -- you can only use j-pm here
   j-ml : J-ML
+  -- I ran out of time!
   j-ml {A} = λ M M-refl refl → j-pm (λ {c} z → M refl) ((λ x → {!!}) (cong (\x → x) refl)) refl 
-
