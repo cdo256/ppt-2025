@@ -67,7 +67,11 @@ open Relation.Binary.PropositionalEquality.≡-Reasoning
 -- 
 -- open import Algebra.Definitions {A = ℕ} _≡_
 
-ℕ-equiv : IsEquivalence _≡_
+private
+  variable
+    ℓ : Level.Level
+
+ℕ-equiv : IsEquivalence {a = 0ℓ} {A = ℕ} _≡_
 ℕ-equiv = record
   { refl = refl
   ; sym = sym
@@ -134,7 +138,7 @@ open Relation.Binary.PropositionalEquality.≡-Reasoning
   ℕ.suc y + x * ℕ.suc y 
                      ≡⟨ ℕ+-cong refl (ℕ*-commute x (ℕ.suc y)) ⟩
   ℕ.suc y + ℕ.suc y * x
-                     ≡⟨ ℕ+-cong refl refl ⟩
+                     ≡⟨ refl ⟩
   ℕ.suc y + (x + y * x)
                      ≡⟨ refl ⟩
   ℕ.suc (y + (x + y * x))
@@ -167,9 +171,9 @@ open Relation.Binary.PropositionalEquality.≡-Reasoning
       (n + m) + (l * m + l * n)
                    ≡⟨ ℕ+-assoc n m (l * m + l * n) ⟩
       n + (m + (l * m + l * n))
-                   ≡⟨ ℕ+-cong refl (sym (ℕ+-assoc m (l * m) (l * n))) ⟩
+                   ≡⟨ ℕ+-cong (refl {x = n}) (sym (ℕ+-assoc m (l * m) (l * n))) ⟩
       n + ((m + l * m) + l * n)
-                   ≡⟨ ℕ+-cong refl (ℕ+-cong refl refl) ⟩
+                   ≡⟨ refl ⟩
       n + (ℕ.suc l * m + l * n)
                    ≡⟨ sym (ℕ+-assoc n ((ℕ.suc l) * m) (l * n)) ⟩
       (n + ℕ.suc l * m) + l * n
@@ -194,7 +198,7 @@ open Relation.Binary.PropositionalEquality.≡-Reasoning
 ℕ*-assoc : Associative _≡_ _*_
 ℕ*-assoc ℕ.zero m n = begin
   (ℕ.zero * m) * n
-                    ≡⟨ ℕ*-cong refl refl ⟩
+                    ≡⟨ refl ⟩
   ℕ.zero * n
                     ≡⟨ refl ⟩
   ℕ.zero
@@ -220,7 +224,7 @@ open Relation.Binary.PropositionalEquality.≡-Reasoning
     left x = ℕ+-commute x 0
     right : (x : ℕ) → x * 1 ≡ x
     right x = trans (ℕ*-commute x 1) (ℕ+-commute x 0)
-      
+   
 ℕ-zero : Zero _≡_ 0 _*_
 ℕ-zero = left , right
   where
