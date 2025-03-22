@@ -49,10 +49,13 @@ open import Relation.Nullary.Reflects using (fromEquivalence)
 
 open Relation.Binary.PropositionalEquality.≡-Reasoning
 
+infix 10 _≡ℤ_
+infixl 30 _+ℤ_
+infixl 40 _*ℤ_
+infixl 50 -ℤ_
+
 ℤ : Set
 ℤ = ℕ × ℕ
-
-infix 30 _≡ℤ_
 
 data _≡ℤ_ : ℤ → ℤ → Set where
   eq : {m+ m- n+ n- : ℕ}
@@ -103,34 +106,50 @@ ztrans {(l+ , l-)} {(m+ , m-)} {(n+ , n-)} (eq lm) (eq mn) =
   ; trans = ztrans
   }
 
-infixl 20 _+ᶻ_
-infixl 40 _*ᶻ_
-infixl 50 -ᶻ_
+-- module ≡ℤ-Reasoning where
+--   infix 1 begin_
+--   infixr 2 _≡ℤ⟨⟩_ _≡ℤ⟨_⟩_
+--   infix 3 _∎
+-- 
+--   begin≡ℤ_ : {m n : ℤ} → m ≡ℤ n → m ≡ℤ n
+--   begin≡ℤ m≡ℤn = m≡ℤn
+-- 
+--   _≡ℤ⟨⟩_ : (m : ℤ) {n : ℤ} → m ≡ℤ n → m ≡ℤ n
+--   m ≡ℤ⟨⟩ m≡ℤn = m≡ℤn
+-- 
+--   _≡ℤ⟨_⟩_ : (l : ℤ) {m n : ℤ} → l ≡ℤ m → m ≡ℤ n → l ≡ℤ n
+--   m ≡ℤ⟨ l≡ℤm ⟩ m≡ℤn = ztrans l≡ℤm m≡ℤn
+-- 
+--   _∎ : (n : ℤ) → n ≡ℤ n
+--   n ∎ = zrefl
 
--ᶻ_ : ℤ → ℤ
--ᶻ (n+ , n-) = (n- , n+)
+-- open ≡ℤ-Reasoning
 
-_+ᶻ_ : ℤ → ℤ → ℤ
-(m+ , m-) +ᶻ (n+ , n-) = (m+ + n+ , m- + n-)
+
+-ℤ_ : ℤ → ℤ
+-ℤ (n+ , n-) = (n- , n+)
+
+_+ℤ_ : ℤ → ℤ → ℤ
+(m+ , m-) +ℤ (n+ , n-) = (m+ + n+ , m- + n-)
 
 -- Alternative definition
--- _*ᶻ_ : ℤ → ℤ → ℤ
--- (m+ , m-) *ᶻ (n+ , n-) = mul m+ m-
+-- _*ℤ_ : ℤ → ℤ → ℤ
+-- (m+ , m-) *ℤ (n+ , n-) = mul m+ m-
 --   where
 --     mul : ℕ → ℕ → ℕ × ℕ
 --     mul zero zero = (zero , zero)
---     mul zero (suc m-) = (n- , n+) +ᶻ mul zero m-
---     mul (suc m+) zero  = (n+ , n-) +ᶻ mul m+ zero
+--     mul zero (suc m-) = (n- , n+) +ℤ mul zero m-
+--     mul (suc m+) zero  = (n+ , n-) +ℤ mul m+ zero
 --     mul (suc m+) (suc m-) = mul m+ m-
 
-_*ᶻ_ : ℤ → ℤ → ℤ
-(m+ , m-) *ᶻ (n+ , n-) = (m+ * n+ + m- * n- , m+ * n- + m- * n+)
+_*ℤ_ : ℤ → ℤ → ℤ
+(m+ , m-) *ℤ (n+ , n-) = (m+ * n+ + m- * n- , m+ * n- + m- * n+)
     
 
 ℤCong : Set
 ℤCong = (f : ℤ → ℤ) → (m n : ℤ) → m ≡ n → f m ≡ f n
 
-ℤ+-cong : Congruent₂ (_≡ℤ_) (_+ᶻ_)
+ℤ+-cong : Congruent₂ (_≡ℤ_) (_+ℤ_)
 ℤ+-cong {(k+ , k-)} {(l+ , l-)} {(m+ , m-)} {(n+ , n-)} (eq kl) (eq mn) =
   eq (begin
     (k+ + m+) + (l- + n-)
@@ -150,59 +169,88 @@ _*ᶻ_ : ℤ → ℤ → ℤ
     l+ + (k- + (n+ + m-))
       ≡⟨ ℕ+-cong (refl {x = l+}) (sym (ℕ+-assoc k- n+ m-)) ⟩
     l+ + ((k- + n+) + m-)
-      ≡⟨ ℕ+-cong (refl {x = l+}) (ℕ+-cong (ℕ+-commute k- n+) (refl {x = m-})) ⟩
+      ≡⟨ ℕ+-cong (refl {x = l+}) (ℕ+-cong (ℕ+-commute k- n+) (refl )) ⟩
     l+ + ((n+ + k-) + m-)
-      ≡⟨ ℕ+-cong (refl {x = {!l+!}}) (ℕ+-assoc n+ k- m-) ⟩
+      ≡⟨ ℕ+-cong (refl {x = l+}) (ℕ+-assoc n+ k- m-) ⟩
     l+ + (n+ + (k- + m-))
       ≡⟨ (sym (ℕ+-assoc l+ n+ (k- + m-))) ⟩
     (l+ + n+) + (k- + m-)
     ∎)
 
--- ℕ+-ident : Identity _≡_ 0 _+_
--- ℕ+-ident = left , right 
---   where
---     left : (x : ℕ) → 0 + x ≡ x
---     left x = refl
---     right : (x : ℕ) → x + 0 ≡ x
---     right ℕ.zero = refl
---     right (ℕ.suc x) = begin
---       ℕ.suc x + 0
---                    ≡⟨ refl ⟩
---       ℕ.suc (x + 0)
---                    ≡⟨ cong ℕ.suc (right x) ⟩
---       ℕ.suc x
---       ∎
--- 
--- ℕ+-assoc : Associative _≡_ _+_
--- ℕ+-assoc zero y z = refl
--- ℕ+-assoc (suc x) y z = begin
---   (ℕ.suc x + y) + z
---                    ≡⟨ refl ⟩
---   (ℕ.suc (x + y)) + z
---                    ≡⟨ refl ⟩
---   ℕ.suc ((x + y) + z)
---                    ≡⟨ cong ℕ.suc (ℕ+-assoc x y z) ⟩
---   ℕ.suc (x + (y + z))
---                    ≡⟨ refl ⟩
---   ℕ.suc x + (y + z)
---   ∎
--- 
--- ℕ+-commute : Commutative _≡_ _+_
--- ℕ+-commute zero zero = refl
--- ℕ+-commute zero (suc y) =
---   cong ℕ.suc (ℕ+-commute ℕ.zero y)
--- ℕ+-commute (suc x) zero =
---   cong ℕ.suc (ℕ+-commute x ℕ.zero)
--- ℕ+-commute (suc x) (suc y) =
---   cong ℕ.suc (trans (ℕ+-commute x (ℕ.suc y))
---              (trans (cong ℕ.suc (ℕ+-commute y x))
---                     (ℕ+-commute (ℕ.suc x) y)))
--- 
--- ℕ*-cong : Congruent₂ (_≡_) (_*_)
+0ℤ : ℤ
+0ℤ = (zero , zero)
+
+1ℤ : ℤ
+1ℤ = (suc zero , zero)
+
+ℤ+-ident : Identity _≡ℤ_ 0ℤ _+ℤ_
+ℤ+-ident = left , right 
+  where
+    left : (n : ℤ) → 0ℤ +ℤ n ≡ℤ n
+    left (n+ , n-) = eq refl
+    right : (n : ℤ) → n +ℤ 0ℤ ≡ℤ n
+    right (n+ , n-) = eq (begin
+      (n+ + zero) + n-
+        ≡⟨ ℕ+-cong (proj₂ ℕ+-ident n+) refl ⟩
+      n+ + n-
+        ≡⟨ ℕ+-cong refl (sym (proj₂ ℕ+-ident n-)) ⟩
+      n+ + (n- + zero)
+      ∎)
+
+ℤ+-assoc : Associative _≡ℤ_ _+ℤ_
+ℤ+-assoc (l+ , l-) (m+ , m-) (n+ , n-) = eq (begin
+  ((l+ + m+) + n+) + (l- + (m- + n-))
+                   ≡⟨ ℕ+-cong (ℕ+-assoc l+ m+ n+) (sym (ℕ+-assoc l- m- n-)) ⟩
+  (l+ + (m+ + n+)) + ((l- + m-) + n-)
+  ∎)
+
+ℤ+-commute : Commutative _≡ℤ_ _+ℤ_
+ℤ+-commute (m+ , m-) (n+ , n-) = eq (begin
+  (m+ + n+) + (n- + m-)
+                   ≡⟨ ℕ+-cong (ℕ+-commute m+ n+) (ℕ+-commute n- m- ) ⟩
+  (n+ + m+) + (m- + n-)
+  ∎)
+
+ℤ-distr : (_DistributesOver_) (_≡ℤ_) (_*ℤ_) (_+ℤ_) 
+ℤ-distr = left , right 
+  where
+    left : ((l+ , l-) (m+ , m-) (n+ , n-) : ℤ)
+         →    (l+ , l-) *ℤ ((m+ , m-) +ℤ (n+ , n-))
+           ≡ℤ (l+ , l-) *ℤ (m+ , m-) +ℤ (l+ , l-) *ℤ (n+ , n-) 
+    left (l+ , l-) (m+ , m-) (n+ , n-) = begin≡ℤ (
+      {!!}
+        ≡ℤ⟨ {!!} ⟩
+      {!!})
+    right : ((l+ , l-) (m+ , m-) (n+ , n-) : ℤ)
+          →    ((m+ , m-) +ℤ (n+ , n-)) *ℤ (l+ , l-)
+            ≡ℤ (m+ , m-) *ℤ (l+ , l-) +ℤ (n+ , n-) *ℤ (l+ , l-)
+    right = {!!}
+
+
+-- ℕ*-cong : Congruent₂ (_≡ℤ_) (_*ℤ_)
 -- ℕ*-cong {x} {y} {u} {v} xy uv =
 --   trans (cong (λ z → x * z) uv)
 --         (cong (λ z → z * v) xy)
--- 
+-- ℤ*-cong : Congruent₂ (_≡ℤ_) (_*ℤ_)
+-- ℤ*-cong {(k+ , k-)} {(l+ , l-)} {(m+ , m-)} {(n+ , n-)} (eq kl) (eq mn) = eq (
+--   begin
+--     (k+ * m+ + k- * m-) + (l+ * n- + l- * n+)
+--       ≡⟨ {!!} ⟩
+--     (k+ * m+ + k- * m-) + (l+ * n- + l- * n+) + 
+--       ≡⟨ {!!} ⟩
+--     (l+ * n+ + l- * n-) + (k+ * m- + k- * m+)
+--     ∎)
+
+{-
+  l- * m- + l+ * m- + l- * m+ + l+ * m+
++ k- * n- + k+ * n- + k- * n+ * k+ * n+ 
++ k+ * m+ + k- * m- + l+ * n- + l- * n+
+= l- * (m- + m+ + n+) + l+ + (m- + m+ + n-)
++ k- * (n- + n+ + m-) + k+ + (n- + n+ + m+)
+= l- * (m+ + m+ + n-) + l+ + (m- + m+ + n-)
++ k- * (n- + n- + m+) + k+ + (n+ + n+ + m-)
+-}
+
 -- ℕ*-commute : Commutative _≡_ _*_
 -- ℕ*-commute zero zero = refl
 -- ℕ*-commute zero (suc y) = ℕ*-commute ℕ.zero y
