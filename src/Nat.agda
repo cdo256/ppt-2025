@@ -233,6 +233,11 @@ private
     right : (x : ℕ) → x * 0 ≡ 0 
     right x = ℕ*-commute x 0
 
+ℕ+-inj : (l m n : ℕ) → l + m ≡ l + n → m ≡ n
+ℕ+-inj zero m n lmln = lmln
+ℕ+-inj (suc l) m n lmln = 
+    ℕ+-inj l m n (cong pred lmln)
+
 ℕ-CommutativeSemiring : CommutativeSemiring 0ℓ 0ℓ
 ℕ-CommutativeSemiring = record
   { Carrier = ℕ
