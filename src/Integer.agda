@@ -3,7 +3,6 @@
 
 module Integer where
 
-  
 open import Data.Nat
   using (ℕ; zero; suc; _+_; _*_)
 open import Nat
@@ -217,10 +216,35 @@ _*ℤ_ : ℤ → ℤ → ℤ
     left : ((l+ , l-) (m+ , m-) (n+ , n-) : ℤ)
          →    (l+ , l-) *ℤ ((m+ , m-) +ℤ (n+ , n-))
            ≡ℤ (l+ , l-) *ℤ (m+ , m-) +ℤ (l+ , l-) *ℤ (n+ , n-) 
-    left (l+ , l-) (m+ , m-) (n+ , n-) = begin≡ℤ (
-      {!!}
-        ≡ℤ⟨ {!!} ⟩
-      {!!})
+    left (l+ , l-) (m+ , m-) (n+ , n-) = eq (begin
+      (l+ * (m+ + n+ ) + l- * (m- + n-)) + ((l+ * m- + l- * m+) + (l+ * n- + l- * n+))
+        ≡⟨ ℕ+-cong refl (ℕ+-assoc (l+ * m-) (l- * m+) (l+ * n- + l- * n+)) ⟩
+      (l+ * (m+ + n+ ) + l- * (m- + n-)) + (l+ * m- + (l- * m+ + (l+ * n- + l- * n+)))
+        ≡⟨ ℕ+-cong refl (ℕ+-cong refl (ℕ+-cong refl (ℕ+-commute (l+ * n-) (l- * n+)))) ⟩
+      (l+ * (m+ + n+ ) + l- * (m- + n-)) + (l+ * m- + (l- * m+ + (l- * n+ + l+ * n-)))
+        ≡⟨ ℕ+-cong refl (ℕ+-cong refl (ℕ+-assoc (l- * m+) (l- * n+) (l+ * n-))) ⟩
+      (l+ * (m+ + n+ ) + l- * (m- + n-)) + (l+ * m- + ((l- * m+ + l- * n+) + l+ * n-))
+        ≡⟨ ℕ+-cong refl (ℕ+-cong refl (ℕ+-commute (l- * m+ + l- * n+) (l+ * n-))) ⟩
+      (l+ * (m+ + n+ ) + l- * (m- + n-)) + (l+ * m- + (l+ * n- + (l- * m+ + l- * n+)))
+        ≡⟨  ℕ+-cong refl (sym (ℕ+-assoc (l+ * m-) (l+ * n-) (l- * m+ + l- * n+))) ⟩
+      (l+ * (m+ + n+ ) + l- * (m- + n-)) + ((l+ * m- + l+ * n-) + (l- * m+ + l- * n+))
+        ≡⟨ ℕ+-cong refl (ℕ+-cong (proj₂ ℕ-distr l+ m- n-) (proj₂ ℕ-distr l- m+ n+)) ⟩
+      (l+ * (m+ + n+ ) + l- * (m- + n-)) + (l+ * (m- + n-) + l- * (m+ + n+))
+        ≡⟨ ℕ+-cong refl (ℕ+-commute (l+ * (m- + n-)) (l- * (m+ + n+))) ⟩
+      (l+ * (m+ + n+ ) + l- * (m- + n-)) + (l- * (m+ + n+) + l+ * (m- + n-))
+        ≡⟨ ℕ+-assoc (l+ * (m+ + n+ )) (l- * (m- + n- )) ((l- * (m+ + n+) + l+ * (m- + n-))) ⟩
+      l+ * (m+ + n+ ) + (l- * (m- + n-) + (l- * (m+ + n+) + l+ * (m- + n-)))
+        ≡⟨ ℕ+-cong refl (sym {!ℕ+-assoc (l- * (m- + n-)) (l- * (m+ + n+)) (l+ * (m- + n-)) !}) ⟩
+      l+ * (m+ + n+ ) + ((l- * (m- + n-) + l- * (m+ + n+)) + l+ * (m- + n-))
+        ≡⟨ {!!} ⟩
+      (((l+ * m+ + l- * m-) + (l+ * n+ + l- * n-)) +
+       (l+ * (m- + n-) +
+        l- * (m+ + n+)))
+        ≡⟨ refl ⟩
+      ((l+ , l-) *ℤ (m+ , m-)) .proj₁ + ((l+ , l-) *ℤ (n+ , n-)) .proj₁ +
+       (l+ * ((m+ , m-) +ℤ (n+ , n-)) .proj₂ +
+        l- * ((m+ , m-) +ℤ (n+ , n-)) .proj₁)
+      ∎)
     right : ((l+ , l-) (m+ , m-) (n+ , n-) : ℤ)
           →    ((m+ , m-) +ℤ (n+ , n-)) *ℤ (l+ , l-)
             ≡ℤ (m+ , m-) *ℤ (l+ , l-) +ℤ (n+ , n-) *ℤ (l+ , l-)
