@@ -1,7 +1,6 @@
 {-# OPTIONS -WnoUnsupportedIndexedMatch --guardedness #-} -- for coinduction
 
-
-module Integer where
+module Integer2 where
 
 open import Data.Nat
   using (ℕ; zero; suc; _+_; _*_)
@@ -45,21 +44,59 @@ open import Relation.Nullary.Negation.Core using (¬_; contradiction)
 open import Relation.Nullary.Reflects using (fromEquivalence)
 
 open Relation.Binary.PropositionalEquality.≡-Reasoning
-open import Relation.Binary.Reasoning.Syntax
-  using (module ≈-syntax)
+-- open import Relation.Binary.Reasoning.Syntax
+--   using (module ≈-syntax)
+
+open import Function.Bundles
+  using (_↔_)
 
 infix 10 _≡ℤ_
-infixl 30 _+ℤ_
+infixl 30 _+ℤ_ _-ℤ_
 infixl 40 _*ℤ_
 infixl 50 -ℤ_
 
 ℤ : Set
 ℤ = ℕ × ℕ
 
+infix 5 _≡0
+
+data _≡0 : ℤ → Set where
+  eq0 : {n+ n- : ℕ}
+      → n+ ≡ n-
+      → (n+ , n-) ≡0
+
+-ℤ_ : ℤ → ℤ
+-ℤ (n+ , n-) = (n- , n+)
+
+_+ℤ_ : ℤ → ℤ → ℤ
+(m+ , m-) +ℤ (n+ , n-) = (m+ + n+ , m- + n-)
+
+_-ℤ_ : ℤ → ℤ → ℤ
+m -ℤ n = m +ℤ -ℤ n 
+
+_*ℤ_ : ℤ → ℤ → ℤ
+(m+ , m-) *ℤ (n+ , n-) = (m+ * n+ + m- * n- , m+ * n- + m- * n+)
+
 data _≡ℤ_ : ℤ → ℤ → Set where
   eq : {m+ m- n+ n- : ℕ}
      → m+ + n- ≡ n+ + m-
      → (m+ , m-) ≡ℤ (n+ , n-)
+
+0ℤ : ℤ
+0ℤ = (zero , zero)
+
+1ℤ : ℤ
+1ℤ = (suc zero , zero)
+
+0≡→≡0 : (n : ℤ) → (n ≡ℤ 0ℤ) → (n ≡0)
+0≡→≡0 (n+ , n-) (eq n≡0) = eq0 (
+  trans (sym (proj₂ ℕ+-ident n+))
+        n≡0)
+
+≡0→0≡ : (n : ℤ) → (n ≡0) → (n ≡ℤ 0ℤ)
+≡0→0≡ (n+ , n-) (eq0 n≡0) = eq (
+  trans (proj₂ ℕ+-ident n+)
+        n≡0)
 
 zrefl : {n : ℤ} → n ≡ℤ n
 zrefl {(n+ , n-)} = eq refl
@@ -112,31 +149,13 @@ ztrans {(l+ , l-)} {(m+ , m-)} {(n+ , n-)} (eq lm) (eq mn) =
   ; isEquivalence = ℤ-equiv
   }
 
+{-
+
 open Setoid ℤ-Setoid
   hiding (refl; sym; trans)
 
-open import Relation.Binary.Reasoning.Base.Single _≈_ zrefl ztrans
-  as SingleRelReasoning
-
--- module ≡ℤ-Reasoning where
---   infix 1 begin_
---   infixr 2 _≡ℤ⟨⟩_ _≡ℤ⟨_⟩_
---   infix 3 _∎
--- 
---   begin≡ℤ_ : {m n : ℤ} → m ≡ℤ n → m ≡ℤ n
---   begin≡ℤ m≡ℤn = m≡ℤn
--- 
---   _≡ℤ⟨⟩_ : (m : ℤ) {n : ℤ} → m ≡ℤ n → m ≡ℤ n
---   m ≡ℤ⟨⟩ m≡ℤn = m≡ℤn
--- 
---   _≡ℤ⟨_⟩_ : (l : ℤ) {m n : ℤ} → l ≡ℤ m → m ≡ℤ n → l ≡ℤ n
---   m ≡ℤ⟨ l≡ℤm ⟩ m≡ℤn = ztrans l≡ℤm m≡ℤn
--- 
---   _∎ : (n : ℤ) → n ≡ℤ n
---   n ∎ = zrefl
-
--- open ≡ℤ-Reasoning
-
+-- open import Relation.Binary.Reasoning.Base.Single _≈_ zrefl ztrans
+--   as SingleRelReasoning
 
 -ℤ_ : ℤ → ℤ
 -ℤ (n+ , n-) = (n- , n+)
@@ -156,7 +175,6 @@ _+ℤ_ : ℤ → ℤ → ℤ
 
 _*ℤ_ : ℤ → ℤ → ℤ
 (m+ , m-) *ℤ (n+ , n-) = (m+ * n+ + m- * n- , m+ * n- + m- * n+)
-    
 
 ℤCong : Set
 ℤCong = (f : ℤ → ℤ) → (m n : ℤ) → m ≡ n → f m ≡ f n
@@ -188,12 +206,6 @@ _*ℤ_ : ℤ → ℤ → ℤ
       ≡⟨ (sym (ℕ+-assoc l+ n+ (k- + m-))) ⟩
     (l+ + n+) + (k- + m-)
     ∎)
-
-0ℤ : ℤ
-0ℤ = (zero , zero)
-
-1ℤ : ℤ
-1ℤ = (suc zero , zero)
 
 ℤ+-ident : Identity _≡ℤ_ 0ℤ _+ℤ_
 ℤ+-ident = left , right 
@@ -460,3 +472,4 @@ _*ℤ_ : ℤ → ℤ → ℤ
 --     ; *-comm = ℕ*-commute
 --     }
 --   }
+-}
