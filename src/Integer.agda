@@ -130,16 +130,6 @@ open Setoid ℤ-Setoid
 _+ℤ_ : ℤ → ℤ → ℤ
 (m+ , m-) +ℤ (n+ , n-) = (m+ + n+ , m- + n-)
 
--- Alternative definition
--- _*ℤ_ : ℤ → ℤ → ℤ
--- (m+ , m-) *ℤ (n+ , n-) = mul m+ m-
---   where
---     mul : ℕ → ℕ → ℕ × ℕ
---     mul zero zero = (zero , zero)
---     mul zero (suc m-) = (n- , n+) +ℤ mul zero m-
---     mul (suc m+) zero  = (n+ , n-) +ℤ mul m+ zero
---     mul (suc m+) (suc m-) = mul m+ m-
-
 _*ℤ_ : ℤ → ℤ → ℤ
 (m+ , m-) *ℤ (n+ , n-) = (m+ * n+ + m- * n- , m+ * n- + m- * n+)
 
