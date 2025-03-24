@@ -508,7 +508,7 @@ _*ℤ_ : ℤ → ℤ → ℤ
                   ; sym = zsym
                   ; trans = ztrans
                   }
-                ; ∙-cong = {!ℤ+-cong!}
+                ; ∙-cong = ℤ+-cong
                 }
               ; assoc = ℤ+-assoc
               }
