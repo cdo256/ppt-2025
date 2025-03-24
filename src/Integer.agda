@@ -8,22 +8,11 @@ open import Nat
 open import Relation.Binary.PropositionalEquality
 open import Algebra.Definitions
 open import Algebra.Structures {A = ℕ} _≡_
-
-open import Axiom.UniquenessOfIdentityProofs using (module Decidable⇒UIP)
-open import Algebra.Bundles using (Magma; Semigroup; CommutativeSemigroup;
-  CommutativeMonoid; Monoid; Semiring; CommutativeSemiring; CommutativeSemiringWithoutOne;
-  CommutativeRing)
-open import Algebra.Definitions.RawMagma using (_,_)
-open import Algebra.Morphism
-import Algebra.Construct.NaturalChoice.MinMaxOp as MinMaxOp
-import Algebra.Lattice.Construct.NaturalChoice.MinMaxOp as LatticeMinMaxOp
+open import Algebra.Bundles using (CommutativeSemiring; CommutativeRing)
 import Algebra.Properties.CommutativeSemigroup as CommSemigroupProperties
-open import Data.Bool.Base using (Bool; false; true; T)
-open import Data.Bool.Properties using (T?)
 open import Data.Nat.Base
 open import Data.Product.Base using (∃; _×_; _,_; proj₁; proj₂)
-open import Data.Sum.Base as Sum using (inj₁; inj₂; _⊎_)
-open import Data.Unit.Base using (tt)
+open import Function.Base using (id)
 open import Level using (0ℓ)
 open import Relation.Binary
 open import Relation.Binary.Bundles using (Setoid)
