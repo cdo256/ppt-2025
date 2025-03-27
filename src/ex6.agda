@@ -152,7 +152,8 @@ module _(j-ml : J-ML) where
 
   -- you can only use j-ml here
   j-pm : J-PM
-  j-pm {A} {a} b-ab-M m-refl {c} refl = j-ml {A} (λ {d} {e} z → b-ab-M {c} refl) (λ {d} → m-refl) refl
+  j-pm {A} {a} b-ab-M m-refl {c} refl =
+    j-ml {A} (λ {d} {e} z → b-ab-M {c} refl) (λ {d} → m-refl) refl
 
 -- subst-it : {A : Set}(P : A → Set) → {a b : A} → a ≡ b → P a → P b
 -- subst-it P = ?
@@ -162,6 +163,19 @@ module _(j-ml : J-ML) where
 
 module _(j-pm : J-PM) where
   -- you can only use j-pm here
+  -- J from J'
   j-ml : J-ML
-  -- I ran out of time!
-  j-ml {A} = λ M M-refl refl → j-pm (λ {c} z → M refl) ((λ x → {!!}) (cong (\x → x) refl)) refl 
+  It≡' : {A : Set} (a : A) (M : A → Set) → M a → {b : A} → (a ≡ b) → M b
+  It≡' a M x refl = j-pm (λ z → M a) x refl 
+
+  subst-it : {A : Set} → (P : A → Set) → {a b : A} → a ≡ b → P a → P b
+  subst-it P refl pa = pa
+
+  -- contractability of singletons
+  contr-sgl : {A : Set}{a : A} → (p : Σ A (λ y → a ≡ y)) → (a , refl) ≡ p
+  contr-sgl (b , refl) = refl
+
+  j-ml {A} M m-refl {a} {b} refl =
+     subst-it M refl m-refl
+       where M' : (Σ A (λ y → a ≡ y)) → Set
+             M' (y , q) = M {y} refl
