@@ -1,0 +1,5 @@
+name: ppt
+include:
+  src
+depend:
+  standard-library

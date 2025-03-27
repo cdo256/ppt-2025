@@ -7,25 +7,50 @@
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      just-agda,
-    }:
+    inputs:
     let
+      nixpkgs = inputs.nixpkgs;
+      inherit (nixpkgs.lib.attrsets)
+        mapAttrs
+        mergeAttrsList
+        ;
+      inherit (nixpkgs.lib) genAttrs;
       systems = [ "x86_64-linux" ];
-      forEachSystem = fn: nixpkgs.lib.genAttrs systems (system: fn nixpkgs.legacyPackages.${system});
+      forEachSystem =
+        fn:
+        mergeAttrsList (
+          map (
+            system:
+            let
+              res = fn nixpkgs.legacyPackages.${system};
+            in
+            mapAttrs (name: value: {
+              ${system} = value;
+            }) res
+          ) systems
+        );
     in
-    {
-      packages = forEachSystem (pkgs: {
-        default = just-agda.packages.${pkgs.system}.default;
-      });
-      devShells = forEachSystem (pkgs: {
-        default = pkgs.mkShell {
+    forEachSystem (
+      pkgs:
+      let
+        agda = pkgs.agda.withPackages (ps: [
+          ps.standard-library
+          #ps.agda-cagetories
+        ]);
+        just-agda = inputs.just-agda.packages.${pkgs.system}.default;
+      in
+      {
+        packages = {
+          inherit agda just-agda;
+          default = just-agda;
+          inherit (pkgs) hello;
+        };
+        devShells.default = pkgs.mkShell {
           buildInputs = [
-            just-agda.packages.${pkgs.system}.default
+            agda
+            just-agda
           ];
         };
-      });
-    };
+      }
+    );
 }

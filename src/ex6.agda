@@ -94,7 +94,7 @@ P09 = {A : Set}{P : A → Prop} →
       (∃[ x ∈ A ] ⊤) → (∃[ x ∈ A ] P x) → ∀[ x ∈ A ] P x
 -- ∃A → ∃P → ∀P
 p09' : P09 → ⊥
-p09' p09 = p09 (true , tt) (true , tt) false
+p09' p09 = p09 {P = P'} (true , tt) (true , tt) false
   where
     P' : Bool → Prop
     P' true = ⊤
