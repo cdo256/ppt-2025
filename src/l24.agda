@@ -1,58 +1,60 @@
 {-# OPTIONS --guardedness #-}
+{- Lecture 24 COMP4074 -}
+
+postulate String : Set
+{-# BUILTIN STRING String #-}
 
 open import lib23
 
--- open import Data.String
-
 {-
 Metatheory
-Propositional logic in Agda (with just →
+Propositional logic, only implication
 
-Formual , [⇒] , atoms = strings, Con - context
+Formulas , [⇒] , atoms = strings
 ⊢ : Formula → Prop
-_⊢_ : Con → Formula → Prop 
+_⊢_ : Con → Formula → Prop
 semantics
+
 -}
 
 data Form : Set where
-  Atom : ℕ → Form
+  Atom : String → Form
   _[⇒]_ : Form → Form → Form
 
 infixr 10 _[⇒]_
 
+-- P → Q → P
 K-F : Form
-K-F = Atom 0 [⇒] Atom 1 [⇒] Atom 0
+K-F = Atom "P" [⇒] Atom "Q" [⇒] Atom "P"
 
--- (P → Q → R) → (P → Q) → (P → R) 
+-- (P → Q → R) → (P → Q) → P → R
 S-F : Form
-S-F = (Atom 0 [⇒] Atom 1 [⇒] Atom 2)
-  [⇒] (Atom 0 [⇒] Atom 1)
-  [⇒] (Atom 0 [⇒] Atom 2)
+S-F = (Atom "P" [⇒] Atom "Q" [⇒] Atom "R")
+    [⇒] (Atom "P" [⇒] Atom "Q")
+    [⇒] Atom "P" [⇒] Atom "R"
 
 data Con : Set where
-  • : Con
-  _▹_ : Con → Form → Con
-
-infix 5 _⊢_
-infixl 10 _▹_
+  • : Con -- \bu
+  _▷_ : Con → Form → Con
 
 variable Γ Δ : Con
-variable ϕ ψ θ : Form
+variable φ ψ θ : Form -- \phi \psi \theta
+
+infix 5 _⊢_
+infixl 8 _▷_
+
+-- natural deduction , Gerhard Gentzen
 
 data _⊢_ : Con → Form → Set where
-  -- introduction
-  zero : Γ ▹ ϕ ⊢ ϕ
-  -- weakening
-  suc : Γ ⊢ ϕ → Γ ▹ ψ ⊢ ϕ
-  -- ⇒-into
-  lam : (Γ ▹ ϕ ⊢ ψ) → (Γ ⊢ ϕ [⇒] ψ)
-  -- 
-  app : (Γ ⊢ ϕ [⇒] ψ) → (Γ ⊢ ϕ) → (Γ ⊢ ψ) 
-
--- debruijn indices 'count the number of lambdas needs to be traversed to result.'
+  zero : Γ ▷ φ ⊢ φ
+  suc : Γ ⊢ φ → Γ ▷ ψ ⊢ φ
+  lam : Γ ▷ φ ⊢ ψ → Γ ⊢ φ [⇒] ψ
+  app : Γ ⊢ φ [⇒] ψ → Γ ⊢ φ → Γ ⊢ ψ
 
 kk : P → Q → P
-kk = λ x _ → x
+kk = λ p → λ q → p
+-- λ λ 1
+-- deBruijn indices
 
 k-d : • ⊢ K-F
 k-d = lam (lam (suc zero))
@@ -62,16 +64,22 @@ ss = λ pqr → λ pq → λ p → pqr p (pq p)
 -- λ λ λ 2 0 (1 0)
 
 s-d : • ⊢ S-F
-s-d =  lam (lam (lam (app (app (suc (suc zero)) zero) (app (suc zero) zero))))
+s-d = lam (lam (lam (app (app (suc (suc zero)) zero)
+          (app (suc zero) zero))))
 
+-- (P → Q) → Q → P
+-- P = ⊥, Q = ⊤ 
 bad : Form
-bad = (Atom 0 [⇒] Atom 1) [⇒] (Atom 1 [⇒] Atom 0)
+bad = (Atom "P" [⇒] Atom "Q") [⇒] (Atom "Q" [⇒] Atom "P") 
 
--- How to prove this?
--- With semantics
 no-d : ¬ (• ⊢ bad)
-no-d (lam d) = {!!}
+no-d (lam (suc (lam d))) = {!!}
+no-d (lam (suc (app (lam d) d₁))) = {!!}
+no-d (lam (suc (app (app d d₂) d₁))) = {!!}
+no-d (lam (lam d)) = {!!}
+no-d (lam (app d d₁)) = {!!}
 no-d (app d e) = {!!}
 
--- Proof theory : ⊢
--- Model theory. What do things mean?
+-- how can I prove no-d ?
+-- proof theory : ⊢
+-- model theory : what do things mean? , sound , completenss

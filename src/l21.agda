@@ -1,47 +1,93 @@
-open import lib21
+{-# OPTIONS --guardedness #-}
+{- Lecture 21 COMP4074 -}
+
+open import lib20
+
+double : ℕ → ℕ
+double zero = zero
+double (suc n) = suc (suc (double n))
+
+half : ℕ → ℕ
+half zero = zero
+half (suc zero) = zero
+half (suc (suc n)) = suc (half n)
+
+-- this is a retract = 1/2 isomorphism
+
+retract : (n : ℕ) → half (double n) ≡ n
+retract zero = refl
+retract (suc n) = cong suc (retract n)
 
 {-
-sort : List N -> List N
-Sorted : List N -> List N -> Prop
-Perm : List N -> List N -> Set--
+section : (n : ℕ) → double (half n) ≡ n
+section zero = refl
+section (suc zero) = {!!}
+section (suc (suc n)) = {!!}
 -}
 
-eqN : N -> N -> Bool
-eqN zero zero = true
-eqN zero (suc n) = false
-eqN (suc m) zero = false
-eqN (suc m) (suc n) = eqN m n
+-- induction = recursion with dependent types
 
-variable l m n : N
+{-
+_+_ : ℕ → ℕ → ℕ
+zero + n = n
+suc m + n = suc (m + n)
+-}
 
-eqNok : m == n iff eqN m n == true
 
--- decidable vs decided
-data Dec (A : Set) : Set where
- yes : A -> Dec A
- no : ¬ A -> Dec A
-
-no-conf : ¬ (zero == suc n)
-no-conf ()
-
-injSuc : suc m = suc n -> m = n
-injSuc refl = refl
-
-_==?_ : (m n : N) -> Dec (m == n)
-zero ==? zero = yes refl
-zero ==? suc n = no no-conf
-suc m ==? zero = no (\ p -> no-conf (sym p))
-suc m == suc n with m ==? n
-... | yes p = yes (conj suc p)
-... | no np = no (\ mn -> np injSuc)
-
--- Decidable halts
--- Decidable doesn't always halt
+-- what are the algebraic properties of addition?
 --
--- Curch's thesis = All N -> N are computable.
--- (Church thesis) => ¬EM
--- CT => All functions are computable 
--- EM => all propositions are decidable
---
--- _==_ {A = N -> Bool} -- not decidable as requires infinite checking to validate.
--- Requires CT to prove it is undecidable.
+-- a monoid (ℕ,0,+) :
+-- left neutral : 0 + m ≡ m
+-- right neutral : m + 0 ≡ m
+-- associative : (l + m) + n ≡ l + (m + n)
+-- a commutative monoid = monoid +
+-- commutative : m + n ≡ n + m
+
+lneutr : (m : ℕ) → 0 + m ≡ m
+lneutr m = refl
+
+rneutr : (m : ℕ) → m + 0 ≡ m
+rneutr zero = refl
+rneutr (suc m) = cong suc (rneutr m)
+
+assoc : (l m n : ℕ) → (l + m) + n ≡ l + (m + n)
+assoc zero m n = refl
+assoc (suc l) m n = cong suc (assoc l m n)
+
+comm-suc : (m n : ℕ) → suc (n + m) ≡ n + suc m
+comm-suc m zero = refl
+comm-suc m (suc n) = cong suc (comm-suc m n)
+
+comm : (m n : ℕ) → m + n ≡ n + m
+comm zero n = sym (rneutr n)
+comm (suc m) n = trans (cong suc (comm m n)) (comm-suc m n)
+{-
+suc (m + n) ≡
+suc (n + m) ≡
+n + suc m
+-}
+
+-- recursion combinator
+{-
+M : ℕ → Set
+f (n : ℕ) → M n
+m-z : M zero
+m s : (n : ℕ) → M n → M (suc n)
+f zero = m-z
+f (suc n) = m-s n (f n)
+
+dependent recursor = eliminator
+-}
+Elim : (M : ℕ → Set)
+     → M zero
+     → ((m : ℕ) → M m → M (suc m))
+     → (n : ℕ) → M n
+Elim M m-z m-s zero = m-z
+Elim M m-z m-s (suc n) = m-s n (Elim M m-z m-s n)
+
+-- Elim -> It , RR
+-- -> induction
+
+retract-E : (n : ℕ) → half (double n) ≡ n
+retract-E = Elim (λ n → half (double n) ≡ n) refl (λ n r-n → cong suc r-n)
+
