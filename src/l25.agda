@@ -171,7 +171,7 @@ skvLem (app d e) = app (skvLem d) (skvLem e)
 dedThm : Γ ⊢ ϕ → Γ ⊢SKv ϕ [⇒] ψ
 proj₂ dedThm zero = II
 -- (λ x. M) M N  = ? S (λ x → M) (λ x → M N)
-proj₂ dedThm (suc d) = -- x deesn't occur in M
+proj₂ dedThm (suc d) = ? -- x deesn't occur in M
 proj₂ ddedThm λ → K = K K
 proj₂ dedThm KK = app KK k-d
 proj₂ dedThm SS = s-d
