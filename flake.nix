@@ -4,18 +4,21 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     just-agda.url = "github:cdo256/just-agda";
+    agda-finset.url = "github:input-output-hk/agda-finset";
   };
 
   outputs =
     inputs:
     let
-      nixpkgs = inputs.nixpkgs;
+      inherit (inputs) nixpkgs;
       inherit (nixpkgs.lib.attrsets)
         mapAttrs
         mergeAttrsList
         ;
       inherit (nixpkgs.lib) genAttrs;
       systems = [ "x86_64-linux" ];
+      # FIXME: This is clobbering other systems when more than one system is included.
+      # Use flake-utils?
       forEachSystem =
         fn:
         mergeAttrsList (
