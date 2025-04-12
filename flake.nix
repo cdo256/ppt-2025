@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     just-agda.url = "github:cdo256/just-agda";
-    agda-finset.url = "github:input-output-hk/agda-finset";
+    #agda-finset.url = "github:input-output-hk/agda-finset";
   };
 
   outputs =
