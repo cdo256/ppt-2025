@@ -66,6 +66,7 @@ data μF : Set where
 ItF : (F M → M) → μF → M
 ItF f (conF x) = f (mapF {!It f!} {!x!})
 
+{-# NO_POSITIVITY_CHECK #-}
 record νF : Set where
   coinductive
   field
